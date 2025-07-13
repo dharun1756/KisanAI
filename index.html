@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kisan AI - Your Farming Assistant</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .floating-animation {
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        .pulse-ring {
+            animation: pulse-ring 2s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
+        }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.8); opacity: 1; }
+            80%, 100% { transform: scale(1.2); opacity: 0; }
+        }
+        .voice-wave {
+            animation: voice-wave 1s ease-in-out infinite alternate;
+        }
+        @keyframes voice-wave {
+            0% { height: 10px; }
+            100% { height: 30px; }
+        }
+        .gradient-text {
+            background: linear-gradient(45deg, #10b981, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        .crop-diseases {
+            background: linear-gradient(135deg, #ff6b6b, #ffa500);
+        }
+        .market-analysis {
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+        }
+        .voice-assistant {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+        .crop-recommendation {
+            background: linear-gradient(135deg, #48bb78, #68d391);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+<div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // Mock data
+        const mockCrops = [
+            { name: 'Rice', price: '₹2,500/quintal', change: '+5.2%', trend: 'up' },
+            { name: 'Wheat', price: '₹2,200/quintal', change: '-2.1%', trend: 'down' },
+            { name: 'Corn', price: '₹1,800/quintal', change: '+3.8%', trend: 'up' },
+            { name: 'Tomato', price: '₹40/kg', change: '+12.5%', trend: 'up' }
+        ];
+
+        const mockSchemes = [
+            { name: 'PM-KISAN', amount: '₹6,000/year', type: 'Central' },
+            { name: 'Crop Insurance', amount: '₹50,000 coverage', type: 'Central' },
+            { name: 'Seed Subsidy', amount: '50% subsidy', type: 'State' },
+            { name: 'Fertilizer Subsidy', amount: '40% subsidy', type: 'Central' }
+        ];
+
+        // Voice Recognition Hook
+        const useVoiceRecognition = () => {
+            const [isListening, setIsListening] = useState(false);
+            const [transcript, setTranscript] = useState('');
+            const recognition = useRef(null);
+
+            useEffect(() => {
+                if ('webkitSpeechRecognition' in window) {
+                    recognition.current = new window.webkitSpeechRecognition();
+                    recognition.current.continuous = true;
+                    recognition.current.interimResults = true;
+                    recognition.current.lang = 'hi-IN';
+
+                    recognition.current.onresult = (event) => {
+                        const transcript = Array.from(event.results)
+                            .map(result => result[0])
+                            .map(result => result.transcript)
+                            .join('');
+                        setTranscript(transcript);
+                    };
+
+                    recognition.current.onend = () => {
+                        setIsListening(false);
+                    };
+                }
+            }, []);
+
+            const startListening = () => {
+                if (recognition.current) {
+                    setIsListening(true);
+                    recognition.current.start();
+                }
+            };
+
+            const stopListening = () => {
+                if (recognition.current) {
+                    recognition.current.stop();
+                    setIsListening(false);
+                }
+            };
+
+            return { isListening, transcript, startListening, stopListening };
+        };
+
+        // Navigation Component
+        const Navigation = ({ activeTab, setActiveTab }) => {
+            const tabs = [
+                { id: 'dashboard', label: 'Dashboard', icon: 'fas fa-home' },
+                { id: 'crop-disease', label: 'Crop Disease', icon: 'fas fa-bug' },
+                { id: 'market', label: 'Market Analysis', icon: 'fas fa-chart-line' },
+                { id: 'voice', label: 'Voice Assistant', icon: 'fas fa-microphone' },
+                { id: 'recommendations', label: 'Crop Recommendations', icon: 'fas fa-seedling' },
+                { id: 'schemes', label: 'Schemes', icon: 'fas fa-hand-holding-usd' }
+            ];
+
+            return (
+                <nav className="glass-effect rounded-2xl p-2 mb-6 backdrop-blur-lg">
+                    <div className="flex overflow-x-auto space-x-1">
+                        {tabs.map((tab) => (
+                            <button
+                                key={tab.id}
+                                onClick={() => setActiveTab(tab.id)}
+                                className={`flex items-center space-x-2 px-4 py-2 rounded-xl transition-all duration-300 whitespace-nowrap ${
+                                    activeTab === tab.id
+                                        ? 'bg-white text-indigo-600 shadow-lg'
+                                        : 'text-white hover:bg-white/20'
+                                }`}
+                            >
+                                <i className={tab.icon}></i>
+                                <span className="font-medium">{tab.label}</span>
+                            </button>
+                        ))}
+                    </div>
+                </nav>
+            );
+        };
+
+        // Dashboard Component
+        const Dashboard = () => {
+            return (
+                <div className="space-y-6">
+                    <div className="text-center">
+                        <h1 className="text-4xl font-bold text-white mb-2">
+                            नमस्ते, किसान भाई! 🌾
+                        </h1>
+                        <p className="text-white/80 text-lg">
+                            Your AI-powered farming assistant is here to help
+                        </p>
+                    </div>
+
+                {/* Feature Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    {[
+                        {
+                            title: 'Crop Doctor',
+                            desc: 'Diagnose plant diseases with AI',
+                            icon: 'leaf',
+                            color: 'text-green-500',
+                            stats: '95% Accuracy',
+                            onClick: () => setActiveTab('crop-disease')
+                        },
+                        {
+                            title: 'Market Prices',
+                            desc: 'Real-time prices from 500+ markets',
+                            icon: 'chart-line',
+                            color: 'text-blue-500',
+                            stats: 'Live Updates',
+                            onClick: () => setActiveTab('market')
+                        },
+                        {
+                            title: 'Voice Assistant',
+                            desc: 'Ask questions in your language',
+                            icon: 'microphone',
+                            color: 'text-purple-500',
+                            stats: '12 Languages',
+                            onClick: () => setActiveTab('voice')
+                        },
+                        {
+                            title: 'Crop Advisor',
+                            desc: 'Personalized planting advice',
+                            icon: 'seedling',
+                            color: 'text-yellow-500',
+                            stats: 'ML Powered',
+                            onClick: () => setActiveTab('recommendations')
+                        }
+                    ].map((card, index) => (
+                        <button
+                            key={index}
+                            onClick={card.onClick}
+                            className="text-left"
+                        >
+                            <div className="card feature-card p-6">
+                                <div className={`text-3xl mb-4 ${card.color}`}>
+                                    <i className={`fas fa-${card.icon}`}></i>
+                                </div>
+                                <h3 className="text-lg font-semibold text-gray-800 mb-2">{card.title}</h3>
+                                <p className="text-gray-600 text-sm mb-3">{card.desc}</p>
+                                <span className="text-xs font-medium bg-gray-100 text-gray-700 px-2 py-1 rounded-full">
+                                    {card.stats}
+                                </span>
+                            </div>
+                        </button>
+                    ))}
+                </div>
+
+                {/* Market Overview */}
+                <div className="bg-white rounded-2xl shadow-sm p-6">
+                    <div className="flex flex-wrap items-center justify-between mb-6">
+                        <h3 className="text-xl font-semibold text-gray-800 flex items-center">
+                            <i className="fas fa-chart-bar text-blue-500 mr-3"></i>
+                            Today's Market Prices
+                        </h3>
+                        <button
+                            onClick={() => setActiveTab('market')}
+                            className="text-green-600 text-sm hover:underline"
+                        >
+                            View All Market Data
+                        </button>
+                    </div>
+
+                    <div className="overflow-x-auto">
+                        <table className="min-w-full divide-y divide-gray-200">
+                            <thead className="bg-gray-50">
+                                <tr>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Crop</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quality</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Change</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Volume</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Forecast</th>
+                                </tr>
+                            </thead>
+                            <tbody className="bg-white divide-y divide-gray-200">
+                                {mockCrops.map((crop, index) => (
+                                    <tr key={index} className="hover:bg-gray-50 transition">
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="flex items-center">
+                                                <div className="flex-shrink-0 h-10 w-10 bg-green-100 rounded-lg flex items-center justify-center">
+                                                    <i className="fas fa-seedling text-green-600"></i>
+                                                </div>
+                                                <div className="ml-4">
+                                                    <div className="text-sm font-medium text-gray-900">{crop.name}</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <span className="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">{crop.quality}</span>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="text-sm font-semibold text-gray-900">{crop.price}</div>
+                                            <div className="text-xs text-gray-500">{crop.unit}</div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <span className={`flex items-center ${crop.trend === 'up' ? 'text-green-600' : 'text-red-600'}`}>
+                                                <i className={`fas ${crop.trend === 'up' ? 'fa-arrow-up' : 'fa-arrow-down'} mr-1`}></i>
+                                                {crop.change}
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            {crop.volume}
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <span className={`px-2 py-1 text-xs rounded-full font-medium ${
+                                                crop.forecast === 'bullish' ? 'bg-green-100 text-green-800' :
+                                                crop.forecast === 'stable' ? 'bg-blue-100 text-blue-800' : 'bg-yellow-100 text-yellow-800'
+                                            }`}>
+                                                {crop.forecast}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                {/* Weather & Insights */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {/* Weather Card */}
+                    <div className="bg-white rounded-2xl shadow-sm p-6">
+                        <h3 className="text-xl font-semibold text-gray-800 flex items-center mb-4">
+                            <i className="fas fa-cloud-sun text-yellow-500 mr-3"></i>
+                            Weather Forecast
+                        </h3>
+
+                        <div className="grid grid-cols-3 gap-4">
+                            <div className="bg-green-50 rounded-lg p-4 text-center">
+                                <div className="text-3xl font-bold text-gray-800 mb-1">{weatherData.temp}°C</div>
+                                <div className="text-sm text-gray-600">Temperature</div>
+                            </div>
+
+                            <div className="bg-blue-50 rounded-lg p-4 text-center">
+                                <div className="text-3xl font-bold text-gray-800 mb-1">{weatherData.humidity}%</div>
+                                <div className="text-sm text-gray-600">Humidity</div>
+                            </div>
+
+                            <div className="bg-purple-50 rounded-lg p-4 text-center">
+                                <div className="text-3xl font-bold text-gray-800 mb-1">{weatherData.windSpeed} km/h</div>
+                                <div className="text-sm text-gray-600">Wind Speed</div>
+                            </div>
+                        </div>
+
+                        <div className="mt-4 pt-4 border-t border-gray-100">
+                            <p className="text-green-600 font-medium">
+                                <i className="fas fa-check-circle mr-2"></i>
+                                Good weather for field operations today
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* AI Insights */}
+                    <div className="bg-white rounded-2xl shadow-sm p-6">
+                        <h3 className="text-xl font-semibold text-gray-800 flex items-center mb-4">
+                            <i className="fas fa-lightbulb text-green-500 mr-3"></i>
+                            AI Farming Insights
+                        </h3>
+
+                        <div className="space-y-4">
+                            <div className="flex items-start">
+                                <div className="flex-shrink-0 mt-1">
+                                    <div className="w-2 h-2 bg-green-500 rounded-full pulse"></div>
+                                </div>
+                                <div className="ml-3">
+                                    <p className="text-gray-700">Optimal planting time for wheat in next 7 days</p>
+                                </div>
+                            </div>
+
+                            <div className="flex items-start">
+                                <div className="flex-shrink-0 mt-1">
+                                    <div className="w-2 h-2 bg-blue-500 rounded-full pulse"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // Crop Disease Detection Component
+        const CropDiseaseDetection = () => {
+            const [selectedImage, setSelectedImage] = useState(null);
+            const [diagnosis, setDiagnosis] = useState(null);
+            const [isAnalyzing, setIsAnalyzing] = useState(false);
+
+        const handleImageUpload = (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    setSelectedImage(e.target.result);
+                };
+                reader.readAsDataURL(file);
+            }
+        };
+
+            const analyzeCrop = () => {
+                setIsAnalyzing(true);
+                // Simulate AI analysis
+                setTimeout(() => {
+                    setDiagnosis({
+                        disease: 'Leaf Blight',
+                        confidence: '94%',
+                        severity: 'Moderate',
+                        solution: 'Apply copper-based fungicide spray in the evening. Remove affected leaves and improve ventilation.',
+                        prevention: 'Ensure proper spacing between plants and avoid overhead watering.'
+                    });
+                    setIsAnalyzing(false);
+                }, 3000);
+            };
+
+        return (
+            <div className="container mx-auto px-4 py-8 space-y-8 slide-in">
+                <div className="back-button" onClick={() => setActiveTab('dashboard')}>
+                    <i className="fas fa-arrow-left"></i>
+                    <span>Back to Dashboard</span>
+                </div>
+
+                <div className="text-center">
+                    <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
+                        AI Crop Disease Detection
+                    </h2>
+                    <p className="text-gray-600 max-w-2xl mx-auto">
+                        Upload a photo of your crop and get instant diagnosis with treatment recommendations
+                    </p>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    {/* Image Upload Section */}
+                    <div className="bg-white rounded-2xl shadow-sm p-6">
+                        <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                            <i className="fas fa-camera text-green-500 mr-3"></i>
+                            Upload Crop Image
+                        </h3>
+
+                        <div
+                            className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center cursor-pointer transition hover:border-green-500 hover:bg-green-50"
+                            onClick={() => fileInputRef.current?.click()}
+                        >
+                            {selectedImage ? (
+                                <div className="space-y-4">
+                                    <img
+                                        src={selectedImage}
+                                        alt="Uploaded crop"
+                                        className="w-full h-64 object-contain rounded-lg"
+                                    />
+                                    <p className="text-green-600 font-medium">Image uploaded successfully</p>
+                                </div>
+                            ) : (
+                                <div className="space-y-4">
+                                    <div className="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mx-auto">
+                                        <i className="fas fa-plus text-green-500 text-2xl"></i>
+                                    </div>
+                                    <div>
+                                        <p className="text-gray-800 font-medium mb-2">Click to upload crop image</p>
+                                        <p className="text-gray-500 text-sm">Supports JPG, PNG up to 10MB</p>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        <input
+                            ref={fileInputRef}
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageUpload}
+                            className="hidden"
+                        />
+
+                        {selectedImage && (
+                            <div className="flex space-x-3 mt-4">
+                                <button
+                                    onClick={() => fileInputRef.current?.click()}
+                                    className="flex-1 bg-gray-100 text-gray-800 py-3 px-6 rounded-lg font-medium hover:bg-gray-200 transition"
+                                >
+                                    <i className="fas fa-sync-alt mr-2"></i>
+                                    Change Image
+                                </button>
+                                <button
+                                    onClick={analyzeImage}
+                                    disabled={isAnalyzing}
+                                    className="flex-1 btn-primary py-3 px-6 rounded-lg font-medium disabled:opacity-70"
+                                >
+                                    {isAnalyzing ? (
+                                        <>
+                                            <i className="fas fa-spinner fa-spin mr-2"></i>
+                                            Analyzing...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <i className="fas fa-search mr-2"></i>
+                                            Analyze
+                                        </>
+                                    )}
+                                </button>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Results Section */}
+                    <div className="bg-white rounded-2xl shadow-sm p-6">
+                        <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                            <i className="fas fa-chart-pie text-blue-500 mr-3"></i>
+                            Analysis Results
+                        </h3>
+
+                        {isAnalyzing && (
+                            <div className="space-y-4">
+                                <div className="flex items-center space-x-3">
+                                    <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                                    <span className="text-gray-600">AI is analyzing your crop image...</span>
+                                </div>
+                                <div className="space-y-3">
+                                    {[1, 2, 3].map((i) => (
+                                        <div key={i} className="h-4 bg-gray-200 rounded-lg animate-pulse"></div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                                {diagnosis && !isAnalyzing && (
+                                    <div className="bg-white/10 rounded-xl p-6 mt-4">
+                                        <h3 className="text-white font-semibold text-xl mb-4">
+                                            Diagnosis Results
+                                        </h3>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div>
+                                                <div className="text-white/70 text-sm">Disease Detected</div>
+                                                <div className="text-white font-medium text-lg">{diagnosis.disease}</div>
+                                            </div>
+                                            <div>
+                                                <div className="text-white/70 text-sm">Confidence</div>
+                                                <div className="text-green-400 font-medium text-lg">{diagnosis.confidence}</div>
+                                            </div>
+                                            <div>
+                                                <div className="text-white/70 text-sm">Severity</div>
+                                                <div className="text-yellow-400 font-medium text-lg">{diagnosis.severity}</div>
+                                            </div>
+                                        </div>
+                                        <div className="mt-4">
+                                            <div className="text-white/70 text-sm mb-2">Solution</div>
+                                            <div className="text-white bg-green-500/20 rounded-lg p-3">
+                                                {diagnosis.solution}
+                                            </div>
+                                        </div>
+                                        <div className="mt-4">
+                                            <div className="text-white/70 text-sm mb-2">Prevention</div>
+                                            <div className="text-white bg-blue-500/20 rounded-lg p-3">
+                                                {diagnosis.prevention}
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+
+        // Market Analysis Component
+        const MarketAnalysis = () => {
+            return (
+                <div className="space-y-6">
+                    <div className="text-center">
+                        <h2 className="text-3xl font-bold text-white mb-2">
+                            📊 Market Analysis
+                        </h2>
+                        <p className="text-white/80">
+                            Real-time crop prices and market trends
+                        </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div className="glass-effect rounded-2xl p-6">
+                            <h3 className="text-white font-semibold mb-4 flex items-center">
+                                <i className="fas fa-chart-line mr-2"></i>
+                                Today's Prices
+                            </h3>
+                            <div className="space-y-4">
+                                {mockCrops.map((crop, index) => (
+                                    <div key={index} className="bg-white/10 rounded-xl p-4">
+                                        <div className="flex items-center justify-between mb-2">
+                                            <div className="text-white font-medium text-lg">{crop.name}</div>
+                                            <div className={`flex items-center space-x-1 ${crop.trend === 'up' ? 'text-green-400' : 'text-red-400'}`}>
+                                                <i className={`fas ${crop.trend === 'up' ? 'fa-arrow-up' : 'fa-arrow-down'}`}></i>
+                                                <span className="font-medium">{crop.change}</span>
+                                            </div>
+                                        </div>
+                                        <div className="text-white/70 text-sm mb-2">{crop.price}</div>
+                                        <div className="bg-white/10 rounded-full h-2">
+                                            <div 
+                                                className={`h-2 rounded-full ${crop.trend === 'up' ? 'bg-green-400' : 'bg-red-400'}`}
+                                                style={{ width: `${Math.random() * 100}%` }}
+                                            ></div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="glass-effect rounded-2xl p-6">
+                            <h3 className="text-white font-semibold mb-4 flex items-center">
+                                <i className="fas fa-calendar-week mr-2"></i>
+                                Weekly Trends
+                            </h3>
+                            <div className="space-y-4">
+                                <div className="bg-white/10 rounded-xl p-4">
+                                    <div className="text-white font-medium mb-2">Best Selling Crops</div>
+                                    <div className="text-green-400 text-sm">Rice, Wheat, Tomatoes</div>
+                                </div>
+                                <div className="bg-white/10 rounded-xl p-4">
+                                    <div className="text-white font-medium mb-2">Price Predictions</div>
+                                    <div className="text-white/70 text-sm">
+                                        Rice prices expected to rise by 8% next week due to increased demand.
+                                    </div>
+                                    <button
+                                        onClick={() => setPriceAlerts(priceAlerts.filter(a => a.id !== alert.id))}
+                                        className="text-red-500 hover:text-red-700"
+                                    >
+                                        <i className="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="text-center py-8">
+                            <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                <i className="fas fa-bell-slash text-gray-400 text-2xl"></i>
+                            </div>
+                            <p className="text-gray-500">No price alerts set up yet</p>
+                        </div>
+                    )}
+                </div>
+
+                {/* Alert Form */}
+                {showAlertForm && (
+                    <div className="bg-white rounded-2xl shadow-sm p-6">
+                        <div className="flex justify-between items-center mb-4">
+                            <h3 className="text-xl font-semibold text-gray-800">Set Price Alert</h3>
+                            <button
+                                onClick={() => {
+                                    setShowAlertForm(false);
+                                    setAlertCrop("");
+                                    setAlertPrice("");
+                                }}
+                                className="text-gray-500 hover:text-gray-700"
+                            >
+                                <i className="fas fa-times"></i>
+                            </button>
+                        </div>
+
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Crop</label>
+                                <input
+                                    type="text"
+                                    value={alertCrop}
+                                    onChange={(e) => setAlertCrop(e.target.value)}
+                                    className="w-full input-field py-2 px-3 rounded-lg"
+                                    placeholder="Enter crop name"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Alert When Price</label>
+                                <div className="flex items-center space-x-3">
+                                    <select
+                                        value={alertCondition}
+                                        onChange={(e) => setAlertCondition(e.target.value)}
+                                        className="input-field py-2 px-3 rounded-lg"
+                                    >
+                                        <option value="above">Goes Above</option>
+                                        <option value="below">Goes Below</option>
+                                    </select>
+                                    <div className="relative flex-1">
+                                        <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+                                        <input
+                                            type="number"
+                                            value={alertPrice}
+                                            onChange={(e) => setAlertPrice(e.target.value)}
+                                            className="w-full input-field py-2 px-3 pl-8 rounded-lg"
+                                            placeholder="Enter price"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="flex justify-end space-x-3 mt-6">
+                                <button
+                                    onClick={() => {
+                                        setShowAlertForm(false);
+                                        setAlertCrop("");
+                                        setAlertPrice("");
+                                    }}
+                                    className="bg-gray-100 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-200 transition"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={handleSaveAlert}
+                                    className="btn-primary px-4 py-2 rounded-lg"
+                                >
+                                    Save Alert
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </div>
+        );
+    };
+
+        // Voice Assistant Component
+        const VoiceAssistant = () => {
+            const { isListening, transcript, startListening, stopListening } = useVoiceRecognition();
+            const [messages, setMessages] = useState([
+                { type: 'bot', text: 'नमस्ते! मैं आपका कृषि सहायक हूँ। आप अपनी भाषा में पूछ सकते हैं।' }
+            ]);
+
+            const handleVoiceCommand = () => {
+                if (isListening) {
+                    stopListening();
+                    if (transcript) {
+                        setMessages(prev => [...prev, { type: 'user', text: transcript }]);
+                        // Simulate AI response
+                        setTimeout(() => {
+                            setMessages(prev => [...prev, { 
+                                type: 'bot', 
+                                text: 'मैं समझ गया। आपकी फसल के लिए मेरी सलाह है कि आप सुबह के समय पानी दें और शाम को खाद डालें।' 
+                            }]);
+                        }, 1000);
+                    }
+                } else {
+                    startListening();
+                }
+            };
+
+        return (
+            <div className="container mx-auto px-4 py-8 space-y-8 slide-in">
+                <div className="back-button" onClick={() => setActiveTab('dashboard')}>
+                    <i className="fas fa-arrow-left"></i>
+                    <span>Back to Dashboard</span>
+                </div>
+
+                <div className="text-center">
+                    <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
+                        Voice AI Assistant
+                    </h2>
+                    <p className="text-gray-600 max-w-2xl mx-auto">
+                        Speak naturally in Hindi, English, or Telugu - Your AI farming expert understands them all
+                    </p>
+                </div>
+
+                    <div className="glass-effect rounded-2xl p-6">
+                        <div className="text-center mb-6">
+                            <button
+                                onClick={handleVoiceCommand}
+                                className={`relative w-24 h-24 rounded-full transition-all duration-300 ${
+                                    isListening 
+                                        ? 'bg-red-500 shadow-2xl' 
+                                        : 'bg-blue-500 hover:bg-blue-600'
+                                }`}
+                            >
+                                {isListening && (
+                                    <div className="absolute inset-0 rounded-full bg-red-500 pulse-ring"></div>
+                                )}
+                                <i className={`fas ${isListening ? 'fa-stop' : 'fa-microphone'} text-white text-2xl`}></i>
+                            </button>
+                            <div className="mt-4 text-white font-medium">
+                                {isListening ? 'Listening...' : 'Tap to speak'}
+                            </div>
+                        </div>
+
+                        {isListening && (
+                            <div className="flex justify-center space-x-1 mb-4">
+                                {[...Array(5)].map((_, i) => (
+                                    <div key={i} className="bg-white/70 w-1 voice-wave rounded-full" style={{ animationDelay: `${i * 0.1}s` }}></div>
+                                ))}
+                            </div>
+                        )}
+
+                        <div className="bg-white/10 rounded-xl p-4 max-h-64 overflow-y-auto">
+                            {messages.map((message, index) => (
+                                <div key={index} className={`mb-4 ${message.type === 'user' ? 'text-right' : 'text-left'}`}>
+                                    <div className={`inline-block max-w-xs lg:max-w-md px-4 py-2 rounded-xl ${
+                                        message.type === 'user' 
+                                            ? 'bg-blue-500 text-white' 
+                                            : 'bg-white/20 text-white'
+                                    }`}>
+                                        {message.text}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        <div className="mt-4 text-center">
+                            <p className="text-white/70 text-sm">
+                                You can ask about: Crop diseases, Market prices, Weather, Fertilizers, Government schemes
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // Crop Recommendations Component
+        const CropRecommendations = () => {
+            const [formData, setFormData] = useState({
+                region: '',
+                soilType: '',
+                season: '',
+                waterAvailability: ''
+            });
+            const [recommendations, setRecommendations] = useState(null);
+
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                // Simulate AI recommendation
+                setRecommendations({
+                    primaryCrop: 'Rice',
+                    secondaryCrops: ['Wheat', 'Sugarcane'],
+                    expectedYield: '45 quintals/acre',
+                    profitMargin: '₹25,000/acre',
+                    tips: [
+                                'Plant rice in the monsoon season',
+                                'Use hybrid seeds for better yield',
+                                'Apply organic fertilizers'
+                            ]
+                        });
+                    };
+
+        return (
+            <div className="container mx-auto px-4 py-8 space-y-8 slide-in">
+                {!selectedCrop ? (
+                    <>
+                        <div className="back-button" onClick={() => setActiveTab('dashboard')}>
+                            <i className="fas fa-arrow-left"></i>
+                            <span>Back to Dashboard</span>
+                        </div>
+
+                        <div className="text-center">
+                            <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
+                                Smart Crop Recommendations
+                            </h2>
+                            <p className="text-gray-600 max-w-2xl mx-auto">
+                                Get personalized crop suggestions based on your soil, climate, and market conditions
+                            </p>
+                        </div>
+
+                        {/* Selection Filters */}
+                        <div className="bg-white rounded-2xl shadow-sm p-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label className="block text-gray-700 font-medium mb-3">Season</label>
+                                    <div className="flex flex-wrap gap-2">
+                                        {seasons.map((season) => (
+                                            <button
+                                                key={season}
+                                                onClick={() => setSelectedSeason(season)}
+                                                className={`tab-button ${selectedSeason === season ? 'active' : ''}`}
+                                            >
+                                                {season.charAt(0).toUpperCase() + season.slice(1)}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label className="block text-gray-700 font-medium mb-3">Soil Type</label>
+                                    <div className="flex flex-wrap gap-2">
+                                        {soilTypes.map((soil) => (
+                                            <button
+                                                key={soil}
+                                                onClick={() => setSelectedSoil(soil)}
+                                                className={`tab-button ${selectedSoil === soil ? 'active' : ''}`}
+                                            >
+                                                {soil.charAt(0).toUpperCase() + soil.slice(1)}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Recommendations */}
+                        {recommendations.length > 0 ? (
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {recommendations.map((crop, index) => (
+                                    <div key={index} className="card bg-white rounded-2xl shadow-sm p-6">
+                                        <div className="flex items-center justify-between mb-4">
+                                            <h3 className="text-gray-800 font-semibold text-lg">{crop.name}</h3>
+                                            <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
+                                                <i className="fas fa-seedling text-green-600"></i>
+                                            </div>
+                                        </div>
+
+                                        <div className="space-y-3">
+                                            <div className="bg-gray-50 rounded-lg p-3">
+                                                <div className="text-gray-600 text-sm">Expected Yield</div>
+                                                <div className="text-gray-800 font-semibold">{crop.yield}</div>
+                                            </div>
+
+                                            <div className="bg-gray-50 rounded-lg p-3">
+                                                <div className="text-gray-600 text-sm">Profit Potential</div>
+                                                <div className="text-green-600 font-semibold">{crop.profit}</div>
+                                            </div>
+
+                                            <div className="bg-gray-50 rounded-lg p-3">
+                                                <div className="text-gray-600 text-sm">Duration</div>
+                                                <div className="text-gray-800 font-semibold">{crop.duration}</div>
+                                            </div>
+                                        </div>
+
+                                        <button
+                                            onClick={() => handleShowGuide(crop)}
+                                            className="btn-primary w-full mt-4 py-2 px-4 rounded-lg"
+                                        >
+                                            <i className="fas fa-info-circle mr-2"></i>
+                                            Detailed Guide
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="bg-white rounded-2xl shadow-sm p-8 text-center">
+                                <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                    <i className="fas fa-seedling text-gray-400 text-2xl"></i>
+                                </div>
+                                <h3 className="text-gray-800 font-semibold mb-2">No recommendations found</h3>
+                                <p className="text-gray-600">Try different season and soil type combinations</p>
+                            </div>
+                        )}
+                    </>
+                ) : (
+                    <div className="bg-white rounded-2xl shadow-sm p-6">
+                        <div className="back-button" onClick={() => setSelectedCrop(null)}>
+                            <i className="fas fa-arrow-left"></i>
+                            <span>Back to Recommendations</span>
+                        </div>
+
+                        <h3 className="text-xl font-semibold text-gray-800 mb-4">{selectedCrop.name} Detailed Guide</h3>
+
+                        <div className="space-y-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="bg-gray-50 rounded-lg p-4">
+                                    <h4 className="text-gray-800 font-medium mb-2">Planting Time</h4>
+                                    <p className="text-gray-600">{selectedCrop.guide.planting}</p>
+                                </div>
+                                <div className="bg-gray-50 rounded-lg p-4">
+                                    <h4 className="text-gray-800 font-medium mb-2">Irrigation</h4>
+                                    <p className="text-gray-600">{selectedCrop.guide.irrigation}</p>
+                                </div>
+                                <div className="bg-gray-50 rounded-lg p-4">
+                                    <h4 className="text-gray-800 font-medium mb-2">Fertilizer Recommendation</h4>
+                                    <p className="text-gray-600">{selectedCrop.guide.fertilizer}</p>
+                                </div>
+                                <div className="bg-gray-50 rounded-lg p-4">
+                                    <h4 className="text-gray-800 font-medium mb-2">Common Pests/Diseases</h4>
+                                    <p className="text-gray-600">{selectedCrop.guide.pests}</p>
+                                </div>
+                            </div>
+
+                            <div className="bg-yellow-50 rounded-lg p-4 border border-yellow-200">
+                                <h4 className="text-yellow-800 font-medium mb-2">Harvesting Time</h4>
+                                <p className="text-yellow-700">{selectedCrop.guide.harvesting}</p>
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </div>
+        );
+    };
+
+                // Government Schemes Component
+                const GovernmentSchemes = () => {
+                    const [selectedScheme, setSelectedScheme] = useState(null);
+
+                    const schemeDetails = {
+                        'PM-KISAN': {
+                            description: 'Direct income support to farmers',
+                            eligibility: 'All landholding farmers',
+                            documents: ['Aadhaar Card', 'Bank Account Details', 'Land Records'],
+                            process: 'Apply online through PM-KISAN portal or visit CSC center'
+                        },
+                        'Crop Insurance': {
+                            description: 'Comprehensive crop insurance coverage',
+                            eligibility: 'All farmers growing notified crops',
+                            documents: ['Aadhaar Card', 'Bank Account', 'Land Documents', 'Sowing Certificate'],
+                            process: 'Apply through insurance companies or banks within cut-off date'
+                        }
+                    };
+
+        return (
+            <div className="container mx-auto px-4 py-8 space-y-8 slide-in">
+                {!selectedScheme ? (
+                    <>
+                        <div className="back-button" onClick={() => setActiveTab('dashboard')}>
+                            <i className="fas fa-arrow-left"></i>
+                            <span>Back to Dashboard</span>
+                        </div>
+
+                        <div className="text-center">
+                            <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
+                                Government Schemes
+                            </h2>
+                            <p className="text-gray-600 max-w-2xl mx-auto">
+                                Discover and apply for government schemes tailored for farmers across India
+                            </p>
+                        </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {mockSchemes.map((scheme, index) => (
+                                    <div key={index} className="glass-effect rounded-2xl p-6 card-hover">
+                                        <div className="flex items-center justify-between mb-4">
+                                            <h3 className="text-white font-semibold text-lg">{scheme.name}</h3>
+                                            <span className={`px-3 py-1 rounded-full text-sm ${
+                                                scheme.type === 'Central' 
+                                                    ? 'bg-blue-500/30 text-blue-300' 
+                                                    : 'bg-green-500/30 text-green-300'
+                                            }`}>
+                                                {scheme.type}
+                                            </span>
+                                        </div>
+                                        <div className="text-white/70 mb-4">{scheme.amount}</div>
+                                        <button
+                                            onClick={() => setSelectedScheme(scheme.name)}
+                                            className="w-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white py-2 rounded-xl hover:from-indigo-600 hover:to-purple-600 transition-all duration-300"
+                                        >
+                                            View Details
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {selectedScheme && schemeDetails[selectedScheme] && (
+                                <div className="glass-effect rounded-2xl p-6">
+                                    <h3 className="text-white font-semibold text-xl mb-4">{selectedScheme} Details</h3>
+                                    <div className="space-y-4">
+                                        <div>
+                                            <div className="text-white/70 text-sm mb-2">Description</div>
+                                            <div className="text-white">{schemeDetails[selectedScheme].description}</div>
+                                        </div>
+                                        <div>
+                                            <div className="text-white/70 text-sm mb-2">Eligibility</div>
+                                            <div className="text-white">{schemeDetails[selectedScheme].eligibility}</div>
+                                        </div>
+                                        <div>
+                                            <div className="text-white/70 text-sm mb-2">Required Documents</div>
+                                            <ul className="text-white space-y-1">
+                                                {schemeDetails[selectedScheme].documents.map((doc, index) => (
+                                                    <li key={index} className="flex items-start">
+                                                        <span className="text-blue-400 mr-2">•</span>
+                                                        {doc}
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                        <div>
+                                            <div className="text-white/70 text-sm mb-2">Application Process</div>
+                                            <div className="text-white bg-blue-500/20 rounded-lg p-3">
+                                                {schemeDetails[selectedScheme].process}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button
+                                        onClick={() => setSelectedScheme(null)}
+                                        className="mt-4 px-4 py-2 bg-white/20 text-white rounded-xl hover:bg-white/30 transition-all duration-300"
+                                    >
+                                        Close
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    );
+                };
+
+                // Main App Component
+                const App = () => {
+                    const [activeTab, setActiveTab] = useState('dashboard');
+
+                    const renderContent = () => {
+                        switch (activeTab) {
+                            case 'dashboard':
+                                return <Dashboard />;
+                            case 'crop-disease':
+                                return <CropDiseaseDetection />;
+                            case 'market':
+                                return <MarketAnalysis />;
+                            case 'voice':
+                                return <VoiceAssistant />;
+                            case 'recommendations':
+                                return <CropRecommendations />;
+                            case 'schemes':
+                                return <GovernmentSchemes />;
+                            default:
+                                return <Dashboard />;
+                        }
+                    };
+
+                    return (
+                        <div className="min-h-screen p-4">
+                            <div className="max-w-7xl mx-auto">
+                                <Navigation activeTab={activeTab} setActiveTab={setActiveTab} />
+                                {renderContent()}
+                            </div>
+                        </div>
+                    );
+                };
+
+                // Render the app
+                ReactDOM.render(<App />, document.getElementById('root'));
+            </script>
+        </body>
+        </html>
