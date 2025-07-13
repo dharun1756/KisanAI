@@ -292,12 +292,16 @@ body {
 }
 
 /* Google Sign-In button customization */
+/* Update the existing .gsi-material-button styles */
 .gsi-material-button {
-    height: 44px !important;
+    height: auto !important; /* Let it adjust to content */
+    min-height: 44px !important; /* Minimum height */
     border-radius: 8px !important;
     font-family: 'Open Sans', sans-serif !important;
     margin-bottom: 16px !important;
-    width: 100% !important;
+    width: auto !important; /* Let it adjust to content */
+    min-width: 240px !important; /* Minimum width */
+    padding: 10px 16px !important; /* Add some padding */
 }
 
 .gsi-material-button .logo {
@@ -441,7 +445,7 @@ body {
             document.getElementById('googleSignInButton'),
             { 
                theme: 'outline', 
-        size: 'medium', // Try 'medium' for better fit
+        size: 'laarge', // Try 'medium' for better fit
         text: 'continue_with',
         shape: 'rectangular',
         width: 'auto' // Let it adjust to content
