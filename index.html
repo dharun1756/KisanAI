@@ -440,9 +440,11 @@ body {
         google.accounts.id.renderButton(
             document.getElementById('googleSignInButton'),
             { 
-                theme: 'outline', 
-                text: 'continue_with',
-                shape: 'rectangular',
+               theme: 'outline', 
+        size: 'medium', // Try 'medium' for better fit
+        text: 'continue_with',
+        shape: 'rectangular',
+        width: 'auto' // Let it adjust to content
             }
         );
     }
