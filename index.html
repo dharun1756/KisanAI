@@ -1,183 +1,1302 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kisan AI - Your Farming Assistant</title>
-    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-        }
-        .glass-effect {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        .floating-animation {
-            animation: float 6s ease-in-out infinite;
-        }
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
-        }
-        .pulse-ring {
-            animation: pulse-ring 2s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
-        }
-        @keyframes pulse-ring {
-            0% { transform: scale(0.8); opacity: 1; }
-            80%, 100% { transform: scale(1.2); opacity: 0; }
-        }
-        .voice-wave {
-            animation: voice-wave 1s ease-in-out infinite alternate;
-        }
-        @keyframes voice-wave {
-            0% { height: 10px; }
-            100% { height: 30px; }
-        }
-        .gradient-text {
-            background: linear-gradient(45deg, #10b981, #3b82f6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        .card-hover {
-            transition: all 0.3s ease;
-        }
-        .card-hover:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-        }
-        .crop-diseases {
-            background: linear-gradient(135deg, #ff6b6b, #ffa500);
-        }
-        .market-analysis {
-            background: linear-gradient(135deg, #4ecdc4, #44a08d);
-        }
-        .voice-assistant {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-        }
-        .crop-recommendation {
-            background: linear-gradient(135deg, #48bb78, #68d391);
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kisan AI - Smart Farming Assistant</title>
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+:root {
+    --primary-color: #2F855A;
+    --secondary-color: #38A169;
+    --accent-color: #4299E1;
+    --light-bg: #F7FAFC;
+    --dark-text: #1A202C;
+    --light-text: #718096;
+}
+
+body {
+    font-family: 'Open Sans', sans-serif;
+    background-color: #F8F9FA;
+    color: var(--dark-text);
+    line-height: 1.6;
+}
+
+.professional-typography {
+    font-family: 'Inter', sans-serif;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #276749;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(47, 133, 90, 0.2);
+}
+
+.btn-secondary {
+    background-color: var(--accent-color);
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+    background-color: #3182CE;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(66, 153, 225, 0.2);
+}
+
+.card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.feature-card {
+    border-left: 4px solid var(--primary-color);
+}
+
+.nav-item {
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.nav-item:hover {
+    color: var(--primary-color);
+}
+
+.nav-item.active {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.nav-item.active::after {
+    content: "";
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: var(--primary-color);
+    border-radius: 3px;
+}
+
+.hero-gradient {
+    background: linear-gradient(135deg, rgba(47, 133, 90, 0.1) 0%, rgba(56, 161, 105, 0.1) 100%);
+}
+
+.voice-wave {
+    animation: voice-wave 0.8s ease-in-out infinite alternate;
+}
+
+@keyframes voice-wave {
+    0% { height: 8px; opacity: 0.4; }
+    100% { height: 24px; opacity: 1; }
+}
+
+.loading-spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.slide-in {
+    animation: slide-in 0.6s ease-out forwards;
+}
+
+@keyframes slide-in {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.pulse {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1;}
+    50% { opacity: 0.5;}
+}
+
+.input-field {
+    transition: all 0.3s ease;
+    border: 1px solid #E2E8F0;
+}
+
+.input-field:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(47, 133, 90, 0.2);
+}
+
+.badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 9999px;
+}
+
+.badge-new {
+    background-color: #F6E05E;
+    color: #744210;
+}
+
+.badge-live {
+    background-color: #F56565;
+    color: white;
+}
+
+.badge-beta {
+    background-color: #4299E1;
+    color: white;
+}
+
+.tab-button {
+    transition: all 0.3s ease;
+    padding: 7px 15px;
+    border-radius: 7px
+}
+
+.tab-button.active {
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: 7px;
+    padding: 7px 15px;
+}
+
+.tab-button:not(.active):hover {
+    background-color: #EDF2F7;
+}
+
+.progress-bar {
+    transition: width 0.6s ease;
+}
+
+.full-page-view {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: white;
+    z-index: 100;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+.back-button {
+    display: flex;
+    align-items: center;
+    color: var(--primary-color);
+    margin-bottom: 20px;
+    cursor: pointer;
+}
+
+.back-button i {
+    margin-right: 8px;
+}
+
+.login-bg {
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
+                url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+    background-size: cover;
+    background-position: center;
+    min-height: 100vh;
+}
+
+.login-card {
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.85);
+}
+
+.feature-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin-bottom: 16px;
+}
+
+.app-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0);
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.app-container:hover {
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
+
+.text-gray-500 {
+    --tw-text-opacity: 1;
+    color: rgb(47 133 90);
+    padding-bottom: 7px;
+    padding-top: 7px;
+    padding-left: 15px;
+    padding-right: 15px;
+    border-radius: 7px;
+}
+
+.alert-section {
+    max-height: 400px;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+}
+
+.alert-section::-webkit-scrollbar {
+    width: 8px;
+}
+
+.alert-section::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.alert-section::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 10px;
+}
+
+.alert-section::-webkit-scrollbar-thumb:hover {
+    background: #276749;
+}
+
+/* Google Sign-In button customization */
+.gsi-material-button {
+    height: 44px !important;
+    border-radius: 8px !important;
+    font-family: 'Open Sans', sans-serif !important;
+    margin-bottom: 16px !important;
+    width: 100% !important;
+}
+
+.gsi-material-button .logo {
+    padding: 0 8px !important;
+}
+
+/* Profile Page Styles */
+.profile-header {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+}
+
+.profile-avatar {
+    border: 4px solid white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.profile-stat {
+    background-color: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+}
+
+.profile-tab {
+    transition: all 0.3s ease;
+    border-bottom: 2px solid transparent;
+}
+
+.profile-tab.active {
+    border-bottom-color: var(--primary-color);
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.profile-tab:hover:not(.active) {
+    border-bottom-color: rgba(47, 133, 90, 0.3);
+}
+
+/* Voice Assistant Fixes */
+.voice-assistant-container {
+    max-width: 800px;
+}
+
+.voice-message-container {
+    min-height: 400px;
+}
+
+/* OTP Input Styles */
+.otp-input {
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    font-size: 20px;
+    margin: 0 5px;
+    border-radius: 8px;
+    border: 1px solid #E2E8F0;
+}
+
+.otp-input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(47, 133, 90, 0.2);
+    outline: none;
+}
+
+/* Language Selector */
+.language-selector {
+    position: relative;
+    display: inline-block;
+}
+
+.language-dropdown {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: white;
+    min-width: 120px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.1);
+    z-index: 1;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.language-selector:hover .language-dropdown {
+    display: block;
+}
+
+.language-option {
+    padding: 10px 16px;
+    display: block;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.language-option:hover {
+    background-color: #f1f1f1;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .profile-header-content {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .profile-stats {
+        justify-content: center;
+    }
+    
+    .otp-input {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+    }
+}
+</style>
 </head>
 <body class="bg-gray-50">
 <div id="root"></div>
 
-    <script type="text/babel">
-        const { useState, useEffect, useRef } = React;
+<script type="text/babel">
+    // Google OAuth Configuration
+    const googleOAuthConfig = {
+        clientId: '642105373942-0bu66v3kcfpvntrs5jenfda2jf2bc3ka.apps.googleusercontent.com', // Replace with your actual client ID
+        scope: 'profile email'
+    };
 
-        // Mock data
-        const mockCrops = [
-            { name: 'Rice', price: '₹2,500/quintal', change: '+5.2%', trend: 'up' },
-            { name: 'Wheat', price: '₹2,200/quintal', change: '-2.1%', trend: 'down' },
-            { name: 'Corn', price: '₹1,800/quintal', change: '+3.8%', trend: 'up' },
-            { name: 'Tomato', price: '₹40/kg', change: '+12.5%', trend: 'up' }
-        ];
+    // Initialize Google Sign-In
+    function initializeGoogleSignIn(onSuccess) {
+        if (typeof google === 'undefined') {
+            console.error('Google OAuth library not loaded');
+            return;
+        }
 
-        const mockSchemes = [
-            { name: 'PM-KISAN', amount: '₹6,000/year', type: 'Central' },
-            { name: 'Crop Insurance', amount: '₹50,000 coverage', type: 'Central' },
-            { name: 'Seed Subsidy', amount: '50% subsidy', type: 'State' },
-            { name: 'Fertilizer Subsidy', amount: '40% subsidy', type: 'Central' }
-        ];
+        google.accounts.id.initialize({
+            client_id: googleOAuthConfig.clientId,
+            callback: (response) => {
+                handleGoogleSignIn(response, onSuccess);
+            }
+        });
 
-        // Voice Recognition Hook
-        const useVoiceRecognition = () => {
-            const [isListening, setIsListening] = useState(false);
-            const [transcript, setTranscript] = useState('');
-            const recognition = useRef(null);
+        // Render the button
+        google.accounts.id.renderButton(
+            document.getElementById('googleSignInButton'),
+            { 
+                theme: 'outline', 
+                size: 'large',
+                text: 'continue_with',
+                shape: 'rectangular',
+                margin: '0 auto',
+            }
+        );
+    }
 
-            useEffect(() => {
-                if ('webkitSpeechRecognition' in window) {
-                    recognition.current = new window.webkitSpeechRecognition();
-                    recognition.current.continuous = true;
-                    recognition.current.interimResults = true;
-                    recognition.current.lang = 'hi-IN';
+    // Handle Google Sign-In response
+    function handleGoogleSignIn(response, onSuccess) {
+        if (response.error) {
+            console.error('Google Sign-In error:', response.error);
+            alert('Google Sign-In failed. Please try again.');
+            return;
+        }
 
-                    recognition.current.onresult = (event) => {
-                        const transcript = Array.from(event.results)
-                            .map(result => result[0])
-                            .map(result => result.transcript)
-                            .join('');
-                        setTranscript(transcript);
-                    };
-
-                    recognition.current.onend = () => {
-                        setIsListening(false);
-                    };
-                }
-            }, []);
-
-            const startListening = () => {
-                if (recognition.current) {
-                    setIsListening(true);
-                    recognition.current.start();
-                }
-            };
-
-            const stopListening = () => {
-                if (recognition.current) {
-                    recognition.current.stop();
-                    setIsListening(false);
-                }
-            };
-
-            return { isListening, transcript, startListening, stopListening };
+        // Decode the credential response
+        const credential = decodeJWT(response.credential);
+        
+        // Extract user details
+        const user = {
+            name: credential.name,
+            email: credential.email,
+            picture: credential.picture,
+            verified: credential.email_verified
         };
 
-        // Navigation Component
-        const Navigation = ({ activeTab, setActiveTab }) => {
-            const tabs = [
-                { id: 'dashboard', label: 'Dashboard', icon: 'fas fa-home' },
-                { id: 'crop-disease', label: 'Crop Disease', icon: 'fas fa-bug' },
-                { id: 'market', label: 'Market Analysis', icon: 'fas fa-chart-line' },
-                { id: 'voice', label: 'Voice Assistant', icon: 'fas fa-microphone' },
-                { id: 'recommendations', label: 'Crop Recommendations', icon: 'fas fa-seedling' },
-                { id: 'schemes', label: 'Schemes', icon: 'fas fa-hand-holding-usd' }
-            ];
+        // Call the success handler with user details
+        onSuccess(user);
+    }
 
-            return (
-                <nav className="glass-effect rounded-2xl p-2 mb-6 backdrop-blur-lg">
-                    <div className="flex overflow-x-auto space-x-1">
-                        {tabs.map((tab) => (
+    // Helper function to decode JWT
+    function decodeJWT(token) {
+        try {
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+            return JSON.parse(jsonPayload);
+        } catch (e) {
+            console.error('Error decoding JWT:', e);
+            return null;
+        }
+    }
+
+    // Mock Firebase configuration (kept for compatibility with existing code)
+    const firebaseMock = {
+        auth: {
+            currentUser: null,
+            signInWithPopup: () => Promise.resolve({ user: { displayName: "Demo User", email: "demo@example.com", phoneNumber: "9876543210" } })
+        },
+        firestore: {
+            collection: () => ({ addDoc: () => Promise.resolve() })
+        },
+        storage: {
+            uploadImage: () => Promise.resolve("https://example.com/image.jpg")
+        },
+        googleProvider: {}
+    };
+
+    // Mock AI service
+    const analyzeCropWithAI = () => Promise.resolve([
+        {
+            disease: "Healthy",
+            probability: 95,
+            severity: "None",
+            treatment: "No treatment needed. Continue regular care.",
+            prevention: "Maintain proper irrigation and fertilization."
+        }
+    ]);
+
+    // Enhanced mock data with more professional structure
+    const mockCrops = [
+        {
+            name: 'Basmati Rice',
+            price: '$3,250',
+            unit: 'per quintal',
+            change: '+8.5%',
+            trend: 'up',
+            volume: '2,340 tons',
+            forecast: 'bullish',
+            quality: 'Grade A',
+            image: 'rice.png'
+        },
+        {
+            name: 'Wheat (PBW 343)',
+            price: '$2,850',
+            unit: 'per quintal',
+            change: '-2.3%',
+            trend: 'down',
+            volume: '1,890 tons',
+            forecast: 'stable',
+            quality: 'Premium',
+            image: 'wheat.png'
+        },
+        {
+            name: 'Hybrid Corn',
+            price: '$2,100',
+            unit: 'per quintal',
+            change: '+12.8%',
+            trend: 'up',
+            volume: '3,120 tons',
+            forecast: 'bullish',
+            quality: 'Grade A',
+            image: 'corn.png'
+        },
+        {
+            name: 'Tomato (Fresh)',
+            price: '$65',
+            unit: 'per kg',
+            change: '+25.4%',
+            trend: 'up',
+            volume: '890 tons',
+            forecast: 'volatile',
+            quality: 'Grade A',
+            image: 'tomato.png'
+        }
+    ];
+
+    const mockSchemes = [
+        {
+            name: 'PM-KISAN Samman Nidhi',
+            amount: '$6,000',
+            period: 'per year',
+            type: 'Central',
+            beneficiaries: '11.7 Cr',
+            status: 'Active',
+            icon: 'hand-holding-usd',
+            description: 'Provides income support to all landholding farmers to enable them to take care of expenses related to agriculture and allied activities as well as domestic needs.',
+            eligibility: 'All landholding farmers families, Small and marginal farmers families, Cultivators',
+            documents: 'Aadhaar Card, Land ownership documents, Bank account details'
+        },
+        {
+            name: 'Pradhan Mantri Fasal Bima Yojana',
+            amount: '$2,00,000',
+            period: 'coverage',
+            type: 'Central',
+            beneficiaries: '5.5 Cr',
+            status: 'Active',
+            icon: 'shield-alt',
+            description: 'Provides comprehensive insurance cover against failure of the crop thus helping in stabilising the income of the farmers.',
+            eligibility: 'All farmers including sharecroppers and tenant farmers growing notified crops in notified areas',
+            documents: 'Land records, Aadhaar Card, Bank account details'
+        },
+        {
+            name: 'Kisan Credit Card',
+            amount: '$3,00,000',
+            period: 'limit',
+            type: 'Central',
+            beneficiaries: '7.3 Cr',
+            status: 'Active',
+            icon: 'credit-card',
+            description: 'Provides adequate and timely credit support from the banking system to farmers for their cultivation needs.',
+            eligibility: 'Individual farmers, Joint borrowers, Tenant farmers, Oral lessees, Sharecroppers',
+            documents: 'Land ownership documents, Identity proof, Address proof, Passport size photos'
+        },
+        {
+            name: 'Soil Health Card Scheme',
+            amount: 'Free Testing',
+            period: 'service',
+            type: 'Central',
+            beneficiaries: '22 Cr',
+            status: 'Active',
+            icon: 'flask',
+            description: 'Provides information to farmers on nutrient status of their soil along with recommendations on appropriate dosage of nutrients to be applied for improving soil health and its fertility.',
+            eligibility: 'All farmers across the country.',
+            documents: 'Aadhaar Card, Land ownership documents'
+        }
+    ];
+
+    // Enhanced voice recognition hook
+    const useVoiceRecognition = () => {
+    const [isListening, setIsListening] = React.useState(false);
+    const [transcript, setTranscript] = React.useState("");
+    const [error, setError] = React.useState(null);
+    const recognition = React.useRef(null);
+
+    React.useEffect(() => {
+        // Check if browser supports speech recognition
+        if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+            setError("Speech recognition not supported in this browser");
+            return;
+        }
+
+        // Initialize recognition
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition.current = new SpeechRecognition();
+        
+        // Configure recognition
+        recognition.current.continuous = true;
+        recognition.current.interimResults = true;
+        recognition.current.lang = 'en-US'; // Default language
+
+        // Event handlers
+        recognition.current.onresult = (event) => {
+            let interimTranscript = '';
+            let finalTranscript = '';
+
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+                const transcript = event.results[i][0].transcript;
+                if (event.results[i].isFinal) {
+                    finalTranscript += transcript;
+                } else {
+                    interimTranscript += transcript;
+                }
+            }
+
+            setTranscript(finalTranscript || interimTranscript);
+        };
+
+        recognition.current.onerror = (event) => {
+            setError(`Error occurred in recognition: ${event.error}`);
+            setIsListening(false);
+        };
+
+        recognition.current.onend = () => {
+            if (isListening) {
+                recognition.current.start();
+            }
+        };
+
+        return () => {
+            if (recognition.current) {
+                recognition.current.stop();
+            }
+        };
+    }, [isListening]);
+
+    const startListening = (language = 'en-US') => {
+        if (recognition.current) {
+            setError(null);
+            setTranscript("");
+            recognition.current.lang = language;
+            recognition.current.start();
+            setIsListening(true);
+        }
+    };
+
+    const stopListening = () => {
+        if (recognition.current) {
+            recognition.current.stop();
+            setIsListening(false);
+        }
+    };
+
+    return { 
+        isListening, 
+        transcript, 
+        error,
+        startListening, 
+        stopListening,
+        isSupported: !error 
+    };
+};
+
+    // OTP Input Component
+    const OtpInput = ({ length = 6, onChange }) => {
+        const [otp, setOtp] = React.useState(Array(length).fill(''));
+        const inputRefs = React.useRef([]);
+
+        const handleChange = (index, value) => {
+            if (isNaN(value)) return;
+            
+            const newOtp = [...otp];
+            newOtp[index] = value;
+            setOtp(newOtp);
+            
+            // Combine OTP
+            const combinedOtp = newOtp.join('');
+            if (combinedOtp.length === length) {
+                onChange(combinedOtp);
+            } else {
+                onChange('');
+            }
+            
+            // Move to next input
+            if (value && index < length - 1) {
+                inputRefs.current[index + 1].focus();
+            }
+        };
+
+        const handleKeyDown = (index, e) => {
+            if (e.key === 'Backspace' && !otp[index] && index > 0) {
+                inputRefs.current[index - 1].focus();
+            }
+        };
+
+        return (
+            <div className="flex justify-center my-4">
+                {Array.from({ length }, (_, index) => (
+                    <input
+                        key={index}
+                        type="text"
+                        maxLength="1"
+                        value={otp[index]}
+                        onChange={(e) => handleChange(index, e.target.value)}
+                        onKeyDown={(e) => handleKeyDown(index, e)}
+                        ref={(el) => (inputRefs.current[index] = el)}
+                        className="otp-input"
+                    />
+                ))}
+            </div>
+        );
+    };
+
+    // Login Page Component with Google Sign-In and OTP
+    const LoginPage = ({ onLoginSuccess }) => {
+        const [isLogin, setIsLogin] = React.useState(true);
+        const [email, setEmail] = React.useState("");
+        const [password, setPassword] = React.useState("");
+        const [name, setName] = React.useState("");
+        const [phone, setPhone] = React.useState("");
+        const [errors, setErrors] = React.useState({});
+        const [showOtp, setShowOtp] = React.useState(false);
+        const [otp, setOtp] = React.useState("");
+        const [otpSent, setOtpSent] = React.useState(false);
+        const [countdown, setCountdown] = React.useState(0);
+        const [loginStep, setLoginStep] = React.useState(1); // 1: email/password, 2: OTP
+        const googleSignInButtonRef = React.useRef(null);
+
+        // Dummy credentials for demo
+        const DEMO_EMAIL = "farmer@demo.com";
+        const DEMO_PASSWORD = "kisan123";
+        const DEMO_OTP = "123456";
+
+        React.useEffect(() => {
+            // Initialize Google Sign-In when component mounts
+            initializeGoogleSignIn((user) => {
+                onLoginSuccess({
+                    name: user.name || "Google User",
+                    email: user.email,
+                    phone: "9876543210", // Google doesn't provide phone number by default
+                    picture: user.picture
+                });
+            });
+
+            // Countdown timer for OTP resend
+            if (countdown > 0) {
+                const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+                return () => clearTimeout(timer);
+            }
+        }, [countdown]);
+
+        const validateLogin = () => {
+            const newErrors = {};
+            if (!email) newErrors.email = 'Email is required';
+            if (!password) newErrors.password = 'Password is required';
+            setErrors(newErrors);
+            return Object.keys(newErrors).length === 0;
+        };
+
+        const validateRegister = () => {
+            const newErrors = {};
+            if (!name) newErrors.name = 'Name is required';
+            if (!email) newErrors.email = 'Email is required';
+            if (!phone) newErrors.phone = 'Phone is required';
+            if (!password) newErrors.password = 'Password is required';
+            setErrors(newErrors);
+            return Object.keys(newErrors).length === 0;
+        };
+
+        const validatePhone = () => {
+            const newErrors = {};
+            if (!phone) newErrors.phone = 'Phone is required';
+            else if (phone.length !== 10) newErrors.phone = 'Phone must be 10 digits';
+            setErrors(newErrors);
+            return Object.keys(newErrors).length === 0;
+        };
+
+        const handleLogin = (e) => {
+            e.preventDefault();
+            if (validateLogin()) {
+                if (email === DEMO_EMAIL && password === DEMO_PASSWORD) {
+                    // Instead of directly logging in, show OTP step
+                    setLoginStep(2);
+                    setOtpSent(true);
+                    setCountdown(30);
+                    alert(`OTP sent to registered mobile number. For demo, use OTP: ${DEMO_OTP}`);
+                } else {
+                    alert("Invalid credentials. For demo, use:\nEmail: farmer@demo.com\nPassword: kisan123");
+                }
+            }
+        };
+
+        const handleRegister = (e) => {
+            e.preventDefault();
+            if (validateRegister()) {
+                onLoginSuccess({
+                    name,
+                    email,
+                    phone
+                });
+            }
+        };
+
+        const handleSendOtp = (e) => {
+            e.preventDefault();
+            if (validatePhone()) {
+                // Mock OTP sending
+                setOtpSent(true);
+                setShowOtp(true);
+                setCountdown(30); // 30 seconds countdown
+                alert(`OTP sent to ${phone}. For demo, use OTP: 123456`);
+            }
+        };
+
+        const handleVerifyOtp = (e) => {
+            e.preventDefault();
+            if (otp === DEMO_OTP) {
+                onLoginSuccess({
+                    name: loginStep === 1 ? "OTP User" : "Demo Farmer",
+                    email: loginStep === 1 ? `${phone}@kisanai.com` : DEMO_EMAIL,
+                    phone: loginStep === 1 ? phone : "9876543210"
+                });
+            } else {
+                alert("Invalid OTP. Please try again.");
+            }
+        };
+
+        return (
+            <div className="login-bg flex items-center justify-center p-4">
+                <div className="app-container max-w-5xl w-full grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    {/* Left side - App Info */}
+                    <div className="text-white">
+                        <div className="flex items-center space-x-3 mb-6">
+                            <div className="w-12 h-12 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+                                <i className="fas fa-seedling text-white text-xl"></i>
+                            </div>
+                            <h1 className="text-3xl font-bold">Kisan AI</h1>
+                        </div>
+
+                        <h2 className="text-4xl font-bold mb-6">Your Smart Farming Companion</h2>
+                        <p className="text-xl mb-8">AI-powered agricultural assistant to maximize your crop yield and profits</p>
+
+                        <div className="grid grid-cols-2 gap-6">
+                            <div className="bg-white bg-opacity-10 p-6 rounded-xl">
+                                <div className="feature-icon bg-green-100 text-green-600">
+                                    <i className="fas fa-leaf"></i>
+                                </div>
+                                <h3 className="text-xl font-semibold mb-2">Crop Doctor</h3>
+                                <p className="text-white text-opacity-80">Diagnose plant diseases with AI</p>
+                            </div>
+
+                            <div className="bg-white bg-opacity-10 p-6 rounded-xl">
+                                <div className="feature-icon bg-blue-100 text-blue-600">
+                                    <i className="fas fa-chart-line"></i>
+                                </div>
+                                <h3 className="text-xl font-semibold mb-2">Market Prices</h3>
+                                <p className="text-white text-opacity-80">Real time mandi prices</p>
+                            </div>
+
+                            <div className="bg-white bg-opacity-10 p-6 rounded-xl">
+                                <div className="feature-icon bg-purple-100 text-purple-600">
+                                    <i className="fas fa-microphone"></i>
+                                </div>
+                                <h3 className="text-xl font-semibold mb-2">Voice Assistant</h3>
+                                <p className="text-white text-opacity-80">Ask in your local language</p>
+                            </div>
+
+                            <div className="bg-white bg-opacity-10 p-6 rounded-xl">
+                                <div className="feature-icon bg-yellow-100 text-yellow-600">
+                                    <i className="fas fa-seedling"></i>
+                                </div>
+                                <h3 className="text-xl font-semibold mb-2">Crop Advisor</h3>
+                                <p className="text-white text-opacity-80">Personalized recommendations</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Right side - Login/Register Form */}
+                    <div className="login-card rounded-2xl shadow-xl p-8">
+                        <div className="text-center mb-8">
+                            <h2 className="text-2xl font-bold text-gray-800">
+                                {showOtp ? 'Verify OTP' : 
+                                 loginStep === 2 ? 'Verify Your Identity' :
+                                 isLogin ? 'Welcome Back' : 'Create Account'}
+                            </h2>
+                            <p className="text-gray-600">
+                                {showOtp ? 'Enter the 6-digit code sent to your phone' : 
+                                 loginStep === 2 ? 'We sent a verification code to your registered mobile number' :
+                                 isLogin ? 'Sign in to continue to Kisan AI' : 'Join Kisan AI to access smart farming tools'}
+                            </p>
+                        </div>
+
+                        {showOtp || loginStep === 2 ? (
+                            <form onSubmit={handleVerifyOtp} className="space-y-4">
+                                <OtpInput length={6} onChange={setOtp} />
+                                
+                                <button 
+                                    type="submit" 
+                                    className="btn-primary w-full py-3 px-4 rounded-lg"
+                                    disabled={otp.length !== 6}
+                                >
+                                    Verify OTP
+                                </button>
+                                
+                                <div className="text-center text-sm text-gray-600">
+                                    Didn't receive OTP?{' '}
+                                    <button
+                                        type="button"
+                                        onClick={loginStep === 1 ? handleSendOtp : () => {
+                                            setCountdown(30);
+                                            alert(`OTP resent. For demo, use OTP: ${DEMO_OTP}`);
+                                        }}
+                                        disabled={countdown > 0}
+                                        className={`text-green-600 font-medium ml-1 ${countdown > 0 ? 'opacity-50' : ''}`}
+                                    >
+                                        Resend {countdown > 0 ? `(${countdown}s)` : ''}
+                                    </button>
+                                </div>
+                                
+                                <div className="text-center text-sm text-gray-600">
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            if (loginStep === 2) {
+                                                setLoginStep(1);
+                                            } else {
+                                                setShowOtp(false);
+                                            }
+                                        }}
+                                        className="text-green-600 font-medium"
+                                    >
+                                        Back to {isLogin ? 'Login' : 'Register'}
+                                    </button>
+                                </div>
+                            </form>
+                        ) : (
+                            <>
+                                {/* Google Sign-In Button */}
+                                <div id="googleSignInButton" ref={googleSignInButtonRef} className="w-full mb-4"></div>
+
+                                <div className="relative my-6">
+                                    <div className="absolute inset-0 flex items-center">
+                                        <div className="w-full border-t border-gray-300"></div>
+                                    </div>
+                                    <div className="relative flex justify-center text-sm">
+                                        <span className="px-2 bg-white text-gray-500">Or continue with email/phone</span>
+                                    </div>
+                                </div>
+
+                                {isLogin ? (
+                                    <form onSubmit={handleLogin} className="space-y-4">
+                                        <div>
+                                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email or Phone</label>
+                                            <input
+                                                type="text"
+                                                id="email"
+                                                value={email}
+                                                onChange={(e) => setEmail(e.target.value)}
+                                                className={`w-full input-field py-2 px-3 rounded-lg ${errors.email ? 'border-red-500' : ''}`}
+                                                placeholder="farmer@example.com or 9876543210"
+                                            />
+                                            {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
+                                        </div>
+
+                                        <div>
+                                            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                                            <input
+                                                type="password"
+                                                id="password"
+                                                value={password}
+                                                onChange={(e) => setPassword(e.target.value)}
+                                                className={`w-full input-field py-2 px-3 rounded-lg ${errors.password ? 'border-red-500' : ''}`}
+                                                placeholder="••••••••"
+                                            />
+                                            {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
+                                        </div>
+
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex items-center">
+                                                <input
+                                                    id="remember-me"
+                                                    name="remember-me"
+                                                    type="checkbox"
+                                                    className="h-4 w-4 text-green-600 focus:ring-green-600 border-gray-300 rounded"
+                                                />
+                                                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
+                                                    Remember me
+                                                </label>
+                                            </div>
+                                            <a href="#" className="text-sm text-green-600 hover:text-green-500">
+                                                Forgot password?
+                                            </a>
+                                        </div>
+
+                                        <button type="submit" className="btn-primary w-full py-3 px-4 rounded-lg">
+                                            Sign In
+                                        </button>
+
+                                        <div className="text-center text-sm text-gray-600">
+                                            Don't have an account?{' '}
+                                            <button
+                                                type="button"
+                                                onClick={() => setIsLogin(false)}
+                                                className="text-green-600 font-medium ml-1"
+                                            >
+                                                Sign Up
+                                            </button>
+                                        </div>
+
+                                        <div className="text-center">
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    setShowOtp(true);
+                                                    setPhone('');
+                                                }}
+                                                className="text-green-600 font-medium"
+                                            >
+                                                Login with OTP
+                                            </button>
+                                        </div>
+                                    </form>
+                                ) : (
+                                    <form onSubmit={handleRegister} className="space-y-4">
+                                        <div>
+                                            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                                            <input
+                                                type="text"
+                                                id="name"
+                                                value={name}
+                                                onChange={(e) => setName(e.target.value)}
+                                                className={`w-full input-field py-2 px-3 rounded-lg ${errors.name ? 'border-red-500' : ''}`}
+                                                placeholder="Farmer Name"
+                                            />
+                                            {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
+                                        </div>
+
+                                        <div>
+                                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                                            <input
+                                                type="email"
+                                                id="email"
+                                                value={email}
+                                                onChange={(e) => setEmail(e.target.value)}
+                                                className={`w-full input-field py-2 px-3 rounded-lg ${errors.email ? 'border-red-500' : ''}`}
+                                                placeholder="farmer@example.com"
+                                            />
+                                            {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
+                                        </div>
+
+                                        <div>
+                                            <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                                            <input
+                                                type="tel"
+                                                id="phone"
+                                                value={phone}
+                                                onChange={(e) => setPhone(e.target.value)}
+                                                className={`w-full input-field py-2 px-3 rounded-lg ${errors.phone ? 'border-red-500' : ''}`}
+                                                placeholder="9876543210"
+                                            />
+                                            {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
+                                        </div>
+
+                                        <div>
+                                            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                                            <input
+                                                type="password"
+                                                id="password"
+                                                value={password}
+                                                onChange={(e) => setPassword(e.target.value)}
+                                                className={`w-full input-field py-2 px-3 rounded-lg ${errors.password ? 'border-red-500' : ''}`}
+                                                placeholder="••••••••"
+                                            />
+                                            {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
+                                        </div>
+
+                                        <button type="submit" className="btn-primary w-full py-3 px-4 rounded-lg">
+                                            Create Account
+                                        </button>
+
+                                        <div className="text-center text-sm text-gray-600">
+                                            Already have an account?{' '}
+                                            <button
+                                                type="button"
+                                                onClick={() => setIsLogin(true)}
+                                                className="text-green-600 font-medium ml-1"
+                                            >
+                                                Sign In
+                                            </button>
+                                        </div>
+                                    </form>
+                                )}
+                            </>
+                        )}
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
+    // Professional Navigation Component
+    const Navigation = ({ activeTab, setActiveTab, onLogout, farmerDetails }) => {
+        const [isScrolled, setIsScrolled] = React.useState(false);
+        const [showLanguageDropdown, setShowLanguageDropdown] = React.useState(false);
+        const [language, setLanguage] = React.useState('English');
+
+        React.useEffect(() => {
+            const handleScroll = () => {
+                setIsScrolled(window.scrollY > 20);
+            };
+            window.addEventListener('scroll', handleScroll);
+            return () => window.removeEventListener('scroll', handleScroll);
+        }, []);
+
+        const tabs = [
+            { id: 'dashboard', label: 'Dashboard', icon: 'chart-pie', badge: null },
+            { id: 'crop-disease', label: 'Crop Doctor', icon: 'leaf', badge: 'AI' },
+            { id: 'market', label: 'Market Prices', icon: 'chart-line', badge: 'Live' },
+            { id: 'voice', label: 'Voice Assistant', icon: 'microphone', badge: 'Beta' },
+            { id: 'recommendations', label: 'Crop Advisor', icon: 'seedling', badge: null },
+            { id: 'schemes', label: 'Govt Schemes', icon: 'file-invoice-dollar', badge: null },
+            { id: 'profile', label: 'Profile', icon: 'user', badge: null }
+        ];
+
+        const languages = [
+            { code: 'en', name: 'English' },
+            { code: 'hi', name: 'हिंदी' },
+            { code: 'te', name: 'తెలుగు' },
+            { code: 'kn', name: 'ಕನ್ನಡ' },
+            { code: 'mr', name: 'मराठी' }
+        ];
+
+        const handleLanguageChange = (lang) => {
+            setLanguage(lang.name);
+            setShowLanguageDropdown(false);
+            // In a real app, you would change the app language here
+        };
+
+        return (
+            <header className={`sticky top-0 z-50 bg-white shadow-sm transition-all duration-300 ${isScrolled ? 'py-2' : 'py-4'}`}>
+                <div className="container mx-auto px-4">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                            <div className="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center">
+                                <i className="fas fa-seedling text-white"></i>
+                            </div>
+                            <h1 className="text-xl font-bold text-gray-800">Kisan AI</h1>
+                        </div>
+
+                        <nav className="hidden md:flex items-center space-x-8">
+                            {tabs.map((tab) => (
+                                <button
+                                    key={tab.id}
+                                    onClick={() => setActiveTab(tab.id)}
+                                    className={`nav-item ${activeTab === tab.id ? 'active' : 'text-gray-600'}`}
+                                >
+                                    <i className={`fas fa-${tab.icon} mr-2`}></i>
+                                    {tab.label}
+                                    {tab.badge && (
+                                        <span className={`badge badge-${tab.badge.toLowerCase()} ml-2`}>
+                                            {tab.badge}
+                                        </span>
+                                    )}
+                                </button>
+                            ))}
+                        </nav>
+
+                        <div className="flex items-center space-x-4">
+                            <div className="language-selector relative">
+                                <button 
+                                    onClick={() => setShowLanguageDropdown(!showLanguageDropdown)}
+                                    className="flex items-center text-gray-600 hover:text-green-600"
+                                >
+                                    <i className="fas fa-language mr-1"></i>
+                                    {language}
+                                    <i className={`fas fa-chevron-${showLanguageDropdown ? 'up' : 'down'} ml-1 text-xs`}></i>
+                                </button>
+                                {showLanguageDropdown && (
+                                    <div className="language-dropdown">
+                                        {languages.map((lang) => (
+                                            <div 
+                                                key={lang.code}
+                                                onClick={() => handleLanguageChange(lang)}
+                                                className="language-option"
+                                            >
+                                                {lang.name}
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                            
                             <button
-                                key={tab.id}
-                                onClick={() => setActiveTab(tab.id)}
-                                className={`flex items-center space-x-2 px-4 py-2 rounded-xl transition-all duration-300 whitespace-nowrap ${
-                                    activeTab === tab.id
-                                        ? 'bg-white text-indigo-600 shadow-lg'
-                                        : 'text-white hover:bg-white/20'
-                                }`}
+                                onClick={onLogout}
+                                className="hidden md:block bg-gray-100 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-200 transition"
                             >
-                                <i className={tab.icon}></i>
-                                <span className="font-medium">{tab.label}</span>
+                                <i className="fas fa-sign-out-alt mr-2"></i>
+                                Logout
                             </button>
-                        ))}
+                            <button className="md:hidden text-gray-600">
+                                <i className="fas fa-bars text-xl"></i>
+                            </button>
+                        </div>
                     </div>
-                </nav>
-            );
+                </div>
+            </header>
+        );
+    };
+
+    // Enhanced Dashboard Component
+    const Dashboard = ({ setActiveTab }) => {
+        const [currentTime, setCurrentTime] = React.useState(new Date());
+        const [weatherData, setWeatherData] = React.useState({
+            temp: 28,
+            condition: 'sunny',
+            humidity: 65,
+            windSpeed: 12
+        });
+        const [reminders, setReminders] = React.useState([]);
+        const [newReminder, setNewReminder] = React.useState("");
+
+        React.useEffect(() => {
+            const timer = setInterval(() => setCurrentTime(new Date()), 1000);
+            return () => clearInterval(timer);
+        }, []);
+
+        const handleAddReminder = () => {
+            if (newReminder.trim()) {
+                setReminders([...reminders, {
+                    id: Date.now(),
+                    text: newReminder,
+                    date: new Date().toLocaleDateString()
+                }]);
+                setNewReminder("");
+            }
         };
 
-        // Dashboard Component
-        const Dashboard = () => {
-            return (
-                <div className="space-y-6">
-                    <div className="text-center">
-                        <h1 className="text-4xl font-bold text-white mb-2">
-                            नमस्ते, किसान भाई! 🌾
-                        </h1>
-                        <p className="text-white/80 text-lg">
-                            Your AI-powered farming assistant is here to help
-                        </p>
+        return (
+            <div className="container mx-auto px-4 py-8 space-y-8 slide-in">
+                {/* Hero Section */}
+                <div className="hero-gradient rounded-2xl p-8 text-center">
+                    <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
+                        Welcome to Your Smart Farming Assistant
+                    </h1>
+                    <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                        Get AI-powered insights to maximize your crop yield and profits
+                    </p>
+
+                    <div className="flex flex-wrap items-center justify-center gap-4 mt-6">
+                        <div className="flex items-center bg-white px-4 py-2 rounded-lg shadow-sm">
+                            <i className="fas fa-map-marker-alt text-green-600 mr-2"></i>
+                            <span>Tirupati, Andhra Pradesh</span>
+                        </div>
+                        <div className="flex items-center bg-white px-4 py-2 rounded-lg shadow-sm">
+                            <i className="fas fa-clock text-green-600 mr-2"></i>
+                            <span>{currentTime.toLocaleTimeString()}</span>
+                        </div>
+                        <div className="flex items-center bg-white px-4 py-2 rounded-lg shadow-sm">
+                            <i className="fas fa-calendar-day text-green-600 mr-2"></i>
+                            <span>{currentTime.toLocaleDateString()}</span>
+                        </div>
                     </div>
+                </div>
 
                 {/* Feature Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -360,18 +1479,95 @@
                                 <div className="flex-shrink-0 mt-1">
                                     <div className="w-2 h-2 bg-blue-500 rounded-full pulse"></div>
                                 </div>
+                                <div className="ml-3">
+                                    <p className="text-gray-700">Rice prices expected to rise by 12% this month</p>
+                                </div>
                             </div>
+
+                            <div className="flex items-start">
+                                <div className="flex-shrink-0 mt-1">
+                                    <div className="w-2 h-2 bg-yellow-500 rounded-full pulse"></div>
+                                </div>
+                                <div className="ml-3">
+                                    <p className="text-gray-700">Apply for PM-KISAN scheme - deadline in 15 days</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="mt-4 pt-4 border-t border-gray-100">
+                            <button
+                                onClick={() => setActiveTab('schemes')}
+                                className="btn-primary px-4 py-2 rounded-lg"
+                            >
+                                <i className="fas fa-file-invoice-dollar mr-2"></i>
+                                View Govt Schemes
+                            </button>
                         </div>
                     </div>
                 </div>
-            );
-        };
 
-        // Crop Disease Detection Component
-        const CropDiseaseDetection = () => {
-            const [selectedImage, setSelectedImage] = useState(null);
-            const [diagnosis, setDiagnosis] = useState(null);
-            const [isAnalyzing, setIsAnalyzing] = useState(false);
+                {/* Reminders List */}
+                <div className="bg-white rounded-2xl shadow-sm p-6">
+                    <h3 className="text-xl font-semibold text-gray-800 flex items-center mb-4">
+                        <i className="fas fa-bell text-yellow-500 mr-3"></i>
+                        Your Reminders
+                    </h3>
+
+                    {reminders.length > 0 ? (
+                        <div className="space-y-3 mb-4">
+                            {reminders.map((reminder) => (
+                                <div key={reminder.id} className="border border-gray-200 rounded-lg p-4 flex justify-between items-center">
+                                    <div>
+                                        <p className="text-gray-800">{reminder.text}</p>
+                                        <p className="text-gray-500 text-sm mt-1">{reminder.date}</p>
+                                    </div>
+                                    <button
+                                        onClick={() => setReminders(reminders.filter(r => r.id !== reminder.id))}
+                                        className="text-red-500 hover:text-red-700"
+                                    >
+                                        <i className="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="text-center py-4">
+                            <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                <i className="fas fa-bell-slash text-gray-400 text-2xl"></i>
+                            </div>
+                            <p className="text-gray-500">No reminders set up yet</p>
+                        </div>
+                    )}
+
+                    <div className="flex items-center space-x-2 mt-4">
+                        <input
+                            type="text"
+                            value={newReminder}
+                            onChange={(e) => setNewReminder(e.target.value)}
+                            onKeyPress={(e) => e.key === 'Enter' && handleAddReminder()}
+                            placeholder="Add a new reminder..."
+                            className="flex-1 input-field py-2 px-4 rounded-lg"
+                        />
+                        <button
+                            onClick={handleAddReminder}
+                            disabled={!newReminder.trim()}
+                            className="btn-primary p-3 rounded-lg"
+                        >
+                            <i className="fas fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
+    // Enhanced Crop Disease Detection Component
+    const CropDiseaseDetection = ({ setActiveTab }) => {
+        const [selectedImage, setSelectedImage] = React.useState(null);
+        const [isAnalyzing, setIsAnalyzing] = React.useState(false);
+        const [results, setResults] = React.useState(null);
+        const [confidence, setConfidence] = React.useState(0);
+        const fileInputRef = React.useRef(null);
 
         const handleImageUpload = (event) => {
             const file = event.target.files[0];
@@ -384,20 +1580,34 @@
             }
         };
 
-            const analyzeCrop = () => {
-                setIsAnalyzing(true);
-                // Simulate AI analysis
+        const analyzeImage = async () => {
+            if (!selectedImage) return;
+            
+            setIsAnalyzing(true);
+            setResults(null);
+            setConfidence(95); // Mock confidence value
+
+            try {
+                // Mock analysis
                 setTimeout(() => {
-                    setDiagnosis({
-                        disease: 'Leaf Blight',
-                        confidence: '94%',
-                        severity: 'Moderate',
-                        solution: 'Apply copper-based fungicide spray in the evening. Remove affected leaves and improve ventilation.',
-                        prevention: 'Ensure proper spacing between plants and avoid overhead watering.'
-                    });
+                    setResults([
+                        {
+                            disease: "Tomato Leaf Curl Virus",
+                            probability: 92,
+                            severity: "High",
+                            treatment: "Remove and destroy infected plants. Apply neem oil spray every 7-10 days.",
+                            prevention: "Use resistant varieties. Control whitefly population with yellow sticky traps.",
+                            organicRemedies: "Neem oil spray, garlic-chili spray, or baking soda solution can help control the spread."
+                        }
+                    ]);
                     setIsAnalyzing(false);
-                }, 3000);
-            };
+                }, 2000);
+            } catch (err) {
+                console.error("Analysis failed:", err);
+                alert("Analysis failed. Please try again.");
+                setIsAnalyzing(false);
+            }
+        };
 
         return (
             <div className="container mx-auto px-4 py-8 space-y-8 slide-in">
@@ -508,101 +1718,261 @@
                             </div>
                         )}
 
-                                {diagnosis && !isAnalyzing && (
-                                    <div className="bg-white/10 rounded-xl p-6 mt-4">
-                                        <h3 className="text-white font-semibold text-xl mb-4">
-                                            Diagnosis Results
-                                        </h3>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            <div>
-                                                <div className="text-white/70 text-sm">Disease Detected</div>
-                                                <div className="text-white font-medium text-lg">{diagnosis.disease}</div>
-                                            </div>
-                                            <div>
-                                                <div className="text-white/70 text-sm">Confidence</div>
-                                                <div className="text-green-400 font-medium text-lg">{diagnosis.confidence}</div>
-                                            </div>
-                                            <div>
-                                                <div className="text-white/70 text-sm">Severity</div>
-                                                <div className="text-yellow-400 font-medium text-lg">{diagnosis.severity}</div>
-                                            </div>
-                                        </div>
-                                        <div className="mt-4">
-                                            <div className="text-white/70 text-sm mb-2">Solution</div>
-                                            <div className="text-white bg-green-500/20 rounded-lg p-3">
-                                                {diagnosis.solution}
-                                            </div>
-                                        </div>
-                                        <div className="mt-4">
-                                            <div className="text-white/70 text-sm mb-2">Prevention</div>
-                                            <div className="text-white bg-blue-500/20 rounded-lg p-3">
-                                                {diagnosis.prevention}
-                                            </div>
-                                        </div>
+                        {results && !isAnalyzing && (
+                            <div className="space-y-6">
+                                <div className="bg-blue-50 rounded-xl p-4">
+                                    <div className="flex items-center justify-between mb-3">
+                                        <span className="text-gray-700 font-medium">Confidence Level</span>
+                                        <span className="text-green-600 font-bold">{confidence}%</span>
                                     </div>
-                                )}
+                                    <div className="w-full bg-gray-200 rounded-full h-2">
+                                        <div
+                                            className="bg-green-500 h-2 rounded-full"
+                                            style={{ width: `${confidence}%` }}
+                                        ></div>
+                                    </div>
+                                </div>
+
+                                <div className="space-y-4">
+                                    {results.map((result, index) => (
+                                        <div key={index} className="border border-gray-200 rounded-xl p-4">
+                                            <div className="flex items-start justify-between mb-3">
+                                                <div>
+                                                    <h4 className="text-gray-800 font-semibold">{result.disease}</h4>
+                                                    <p className="text-gray-500 text-sm">Probability: {result.probability}%</p>
+                                                </div>
+                                                <div className={`px-3 py-1 rounded-full text-xs font-medium ${
+                                                    result.severity === 'None' ? 'bg-green-100 text-green-800' :
+                                                    result.severity === 'Moderate' ? 'bg-yellow-100 text-yellow-800' :
+                                                    'bg-red-100 text-red-800'
+                                                }`}>
+                                                    {result.severity}
+                                                </div>
+                                            </div>
+                                            <div className="space-y-3">
+                                                <div>
+                                                    <span className="text-gray-700 text-sm font-medium">Treatment: </span>
+                                                    <span className="text-gray-600 text-sm">{result.treatment}</span>
+                                                </div>
+                                                <div>
+                                                    <span className="text-gray-700 text-sm font-medium">Prevention: </span>
+                                                    <span className="text-gray-600 text-sm">{result.prevention}</span>
+                                                </div>
+                                                {result.organicRemedies && (
+                                                    <div>
+                                                        <span className="text-gray-700 text-sm font-medium">Organic Remedies: </span>
+                                                        <span className="text-gray-600 text-sm">{result.organicRemedies}</span>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {!selectedImage && !isAnalyzing && (
+                            <div className="text-center py-12">
+                                <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                    <i className="fas fa-microscope text-gray-400 text-2xl"></i>
+                                </div>
+                                <p className="text-gray-500">Upload an image to see AI analysis results</p>
                             </div>
                         )}
                     </div>
                 </div>
-            );
+            </div>
+        );
+    };
+
+    // Market Intelligence Component
+    const MarketIntelligence = ({ setActiveTab }) => {
+        const [selectedMarket, setSelectedMarket] = React.useState('all');
+        const [priceAlerts, setPriceAlerts] = React.useState([]);
+        const [showAlertForm, setShowAlertForm] = React.useState(false);
+        const [alertCrop, setAlertCrop] = React.useState("");
+        const [alertPrice, setAlertPrice] = React.useState("");
+        const [alertCondition, setAlertCondition] = React.useState('above');
+        const [searchQuery, setSearchQuery] = React.useState("");
+        const alertSectionRef = React.useRef(null);
+
+        const markets = [
+            { id: 'all', name: 'All Markets', count: 500 },
+            { id: 'ap', name: 'Andhra Pradesh', count: 45 },
+            { id: 'tn', name: 'Tamil Nadu', count: 38 },
+            { id: 'ka', name: 'Karnataka', count: 42 },
+            { id: 'mh', name: 'Maharashtra', count: 55 }
+        ];
+
+        const handleSetAlert = (crop) => {
+            setAlertCrop(crop.name);
+            setAlertPrice(crop.price.replace('$', '').replace(',', ''));
+            setShowAlertForm(true);
+            // Scroll to alert section
+            setTimeout(() => {
+                alertSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
+            }, 100);
         };
 
-        // Market Analysis Component
-        const MarketAnalysis = () => {
-            return (
-                <div className="space-y-6">
-                    <div className="text-center">
-                        <h2 className="text-3xl font-bold text-white mb-2">
-                            📊 Market Analysis
-                        </h2>
-                        <p className="text-white/80">
-                            Real-time crop prices and market trends
-                        </p>
-                    </div>
+        const handleSaveAlert = () => {
+            if (alertCrop && alertPrice) {
+                setPriceAlerts([...priceAlerts, {
+                    id: Date.now(),
+                    crop: alertCrop,
+                    price: alertPrice,
+                    condition: alertCondition
+                }]);
+                setShowAlertForm(false);
+                setAlertCrop("");
+                setAlertPrice("");
+            }
+        };
 
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <div className="glass-effect rounded-2xl p-6">
-                            <h3 className="text-white font-semibold mb-4 flex items-center">
-                                <i className="fas fa-chart-line mr-2"></i>
-                                Today's Prices
-                            </h3>
-                            <div className="space-y-4">
-                                {mockCrops.map((crop, index) => (
-                                    <div key={index} className="bg-white/10 rounded-xl p-4">
-                                        <div className="flex items-center justify-between mb-2">
-                                            <div className="text-white font-medium text-lg">{crop.name}</div>
-                                            <div className={`flex items-center space-x-1 ${crop.trend === 'up' ? 'text-green-400' : 'text-red-400'}`}>
-                                                <i className={`fas ${crop.trend === 'up' ? 'fa-arrow-up' : 'fa-arrow-down'}`}></i>
-                                                <span className="font-medium">{crop.change}</span>
-                                            </div>
-                                        </div>
-                                        <div className="text-white/70 text-sm mb-2">{crop.price}</div>
-                                        <div className="bg-white/10 rounded-full h-2">
-                                            <div 
-                                                className={`h-2 rounded-full ${crop.trend === 'up' ? 'bg-green-400' : 'bg-red-400'}`}
-                                                style={{ width: `${Math.random() * 100}%` }}
-                                            ></div>
-                                        </div>
-                                    </div>
+        const filteredCrops = mockCrops.filter(crop => 
+            crop.name.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+
+        return (
+            <div className="container mx-auto px-4 py-8 space-y-8 slide-in">
+                <div className="back-button" onClick={() => setActiveTab('dashboard')}>
+                    <i className="fas fa-arrow-left"></i>
+                    <span>Back to Dashboard</span>
+                </div>
+
+                <div className="text-center">
+                    <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
+                        Market Intelligence
+                    </h2>
+                    <p className="text-gray-600 max-w-2xl mx-auto">
+                        Real-time market data from 500+ mandis across India with price predictions
+                    </p>
+                </div>
+
+                {/* Search and Filters */}
+                <div className="bg-white rounded-2xl shadow-sm p-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label className="block text-gray-700 font-medium mb-2">Search Crops</label>
+                            <div className="relative">
+                                <input
+                                    type="text"
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    placeholder="Search for crops..."
+                                    className="w-full input-field py-2 px-4 pl-10 rounded-lg"
+                                />
+                                <i className="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label className="block text-gray-700 font-medium mb-2">Filter by Market</label>
+                            <div className="flex flex-wrap gap-2">
+                                {markets.map((market) => (
+                                    <button
+                                        key={market.id}
+                                        onClick={() => setSelectedMarket(market.id)}
+                                        className={`tab-button ${selectedMarket === market.id ? 'active' : ''}`}
+                                    >
+                                        {market.name}
+                                        <span className="ml-1 text-xs opacity-70">({market.count})</span>
+                                    </button>
                                 ))}
                             </div>
                         </div>
+                    </div>
+                </div>
 
-                        <div className="glass-effect rounded-2xl p-6">
-                            <h3 className="text-white font-semibold mb-4 flex items-center">
-                                <i className="fas fa-calendar-week mr-2"></i>
-                                Weekly Trends
-                            </h3>
-                            <div className="space-y-4">
-                                <div className="bg-white/10 rounded-xl p-4">
-                                    <div className="text-white font-medium mb-2">Best Selling Crops</div>
-                                    <div className="text-green-400 text-sm">Rice, Wheat, Tomatoes</div>
+                {/* Price Cards */}
+                {filteredCrops.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {filteredCrops.map((crop, index) => (
+                            <div key={index} className="card bg-white rounded-2xl shadow-sm p-6">
+                                <div className="flex items-center justify-between mb-4">
+                                    <div className="flex items-center space-x-4">
+                                        <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                                            <i className="fas fa-seedling text-green-600"></i>
+                                        </div>
+                                        <div>
+                                            <h3 className="text-gray-800 font-semibold">{crop.name}</h3>
+                                            <p className="text-gray-500 text-sm">{crop.quality}</p>
+                                        </div>
+                                    </div>
+                                    <div className="text-right">
+                                        <div className="text-xl font-bold text-gray-800">{crop.price}</div>
+                                        <div className="text-gray-500 text-sm">{crop.unit}</div>
+                                    </div>
                                 </div>
-                                <div className="bg-white/10 rounded-xl p-4">
-                                    <div className="text-white font-medium mb-2">Price Predictions</div>
-                                    <div className="text-white/70 text-sm">
-                                        Rice prices expected to rise by 8% next week due to increased demand.
+
+                                <div className="space-y-3">
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-gray-600 text-sm">24h Change</span>
+                                        <span className={`font-semibold ${crop.trend === 'up' ? 'text-green-600' : 'text-red-600'}`}>
+                                            {crop.change}
+                                        </span>
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-gray-600 text-sm">Volume</span>
+                                        <span className="text-gray-800 font-medium">{crop.volume}</span>
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-gray-600 text-sm">Forecast</span>
+                                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                            crop.forecast === 'bullish' ? 'bg-green-100 text-green-800' :
+                                            crop.forecast === 'stable' ? 'bg-blue-100 text-blue-800' : 'bg-yellow-100 text-yellow-800'
+                                        }`}>
+                                            {crop.forecast}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div className="mt-4 pt-4 border-t border-gray-100">
+                                    <button
+                                        onClick={() => handleSetAlert(crop)}
+                                        className="btn-secondary w-full py-2 px-4 rounded-lg"
+                                    >
+                                        <i className="fas fa-bell mr-2"></i>
+                                        Set Price Alert
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <div className="bg-white rounded-2xl shadow-sm p-8 text-center">
+                        <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                            <i className="fas fa-search text-gray-400 text-2xl"></i>
+                        </div>
+                        <h3 className="text-gray-800 font-semibold mb-2">No crops found</h3>
+                        <p className="text-gray-600">Try a different search term</p>
+                    </div>
+                )}
+
+                {/* Price Alerts Section */}
+                <div className="bg-white rounded-2xl shadow-sm p-6" ref={alertSectionRef}>
+                    <div className="flex justify-between items-center mb-4">
+                        <h3 className="text-xl font-semibold text-gray-800 flex items-center">
+                            <i className="fas fa-bell text-yellow-500 mr-3"></i>
+                            Your Price Alerts
+                        </h3>
+                        <button
+                            onClick={() => setShowAlertForm(true)}
+                            className="btn-primary px-4 py-2 rounded-lg"
+                        >
+                            <i className="fas fa-plus mr-2"></i>
+                            Add New Alert
+                        </button>
+                    </div>
+
+                    {priceAlerts.length > 0 ? (
+                        <div className="alert-section space-y-3">
+                            {priceAlerts.map((alert) => (
+                                <div key={alert.id} className="border border-gray-200 rounded-lg p-4 flex justify-between items-center">
+                                    <div>
+                                        <p className="text-gray-800 font-medium">{alert.crop}</p>
+                                        <p className="text-gray-600 text-sm mt-1">
+                                            Alert when price goes {alert.condition} ${alert.price}
+                                        </p>
                                     </div>
                                     <button
                                         onClick={() => setPriceAlerts(priceAlerts.filter(a => a.id !== alert.id))}
@@ -701,30 +2071,92 @@
         );
     };
 
-        // Voice Assistant Component
-        const VoiceAssistant = () => {
-            const { isListening, transcript, startListening, stopListening } = useVoiceRecognition();
-            const [messages, setMessages] = useState([
-                { type: 'bot', text: 'नमस्ते! मैं आपका कृषि सहायक हूँ। आप अपनी भाषा में पूछ सकते हैं।' }
-            ]);
+    // Voice Assistant Component (Fixed)
+    const VoiceAssistant = ({ setActiveTab }) => {
+        const { isListening, transcript, startListening, stopListening } = useVoiceRecognition();
+        const [messages, setMessages] = React.useState([
+            {
+                type: 'assistant',
+                content: 'Welcome to Your Smart Farming Assistant. Get AI-powered insights to maximize your crop yield and profits!',
+                timestamp: new Date()
+            }
+        ]);
+        const [isProcessing, setIsProcessing] = React.useState(false);
+        const [inputMessage, setInputMessage] = React.useState("");
+        const [selectedLanguage, setSelectedLanguage] = React.useState('hi-IN');
 
-            const handleVoiceCommand = () => {
-                if (isListening) {
-                    stopListening();
-                    if (transcript) {
-                        setMessages(prev => [...prev, { type: 'user', text: transcript }]);
-                        // Simulate AI response
-                        setTimeout(() => {
-                            setMessages(prev => [...prev, { 
-                                type: 'bot', 
-                                text: 'मैं समझ गया। आपकी फसल के लिए मेरी सलाह है कि आप सुबह के समय पानी दें और शाम को खाद डालें।' 
-                            }]);
-                        }, 1000);
-                    }
-                } else {
-                    startListening();
-                }
+        const handleSendMessage = (message) => {
+            if (!message.trim()) return;
+
+            const userMessage = {
+                type: 'user',
+                content: message,
+                timestamp: new Date()
             };
+
+            setMessages(prev => [...prev, userMessage]);
+            setIsProcessing(true);
+            setInputMessage("");
+
+            // Simulate AI response
+            setTimeout(() => {
+                const responses = {
+                    'hi-IN': [
+                        'आपकी फसल के लिए यह एक बहुत अच्छा समय है। मौसम अनुकूल है और बाजार की स्थिति भी अच्छी है।',
+                        'वर्तमान मौसम की स्थिति के अनुसार, आपको सिंचाई की आवृत्ति बढ़ानी चाहिए।',
+                        'बाजार की जानकारी के अनुसार, चावल की कीमतें अगले महीने 8-10% बढ़ सकती हैं।',
+                        'आपकी फसल में कोई रोग के लक्षण नजर नहीं आ रहे। नियमित देखभाल जारी रखें।',
+                        'मैं आपकी फसल की तस्वीर का विश्लेषण कर सकता हूं। कृपया कैमरा आइकन पर क्लिक करें।',
+                        'आपके क्षेत्र में गेहूं की खेती के लिए मौसम अनुकूल है। आप बुवाई शुरू कर सकते हैं।'
+                    ],
+                    'en-US': [
+                        'This is a very good time for your crop. The weather is favorable and the market conditions are also good.',
+                        'According to current weather conditions, you should increase the frequency of irrigation.',
+                        'According to market information, rice prices may increase by 8-10% next month.',
+                        'There are no signs of disease in your crop. Continue regular care.',
+                        'I can analyze photos of your crops. Please click on the camera icon.',
+                        'The weather is favorable for wheat cultivation in your area. You can start sowing.'
+                    ],
+                    'te-IN': [
+                        'మీ పంటకు ఇది చాలా మంచి సమయం. వాతావరణం అనుకూలంగా ఉంది మరియు మార్కెట్ పరిస్థితులు కూడా మంచివి.',
+                        'ప్రస్తుత వాతావరణ పరిస్థితుల ప్రకారం, మీరు నీటిపారుదల యొక్క పౌనఃపున్యాన్ని పెంచాలి.',
+                        'మార్కెట్ సమాచారం ప్రకారం, వరి ధరలు తదుపరి నెలలో 8-10% పెరగవచ్చు.',
+                        'మీ పంటలో ఏవైనా వ్యాధి లక్షణాలు కనిపించడం లేదు. సాధారణ సంరక్షణను కొనసాగించండి.',
+                        'నేను మీ పంటల ఫోటోలను విశ్లేషించగలను. దయచేసి కెమెరా చిహ్నంపై క్లిక్ చేయండి.',
+                        'మీ ప్రాంతంలో గోధుమ సాగుకు వాతావరణం అనుకూలంగా ఉంది. మీరు విత్తనం ప్రారంభించవచ్చు.'
+                    ],
+                    'kn-IN': [
+                        'ನಿಮ್ಮ ಬೆಳೆಗೆ ಇದು ತುಂಬಾ ಒಳ್ಳೆಯ ಸಮಯ. ಹವಾಮಾನ ಅನುಕೂಲಕರವಾಗಿದೆ ಮತ್ತು ಮಾರುಕಟ್ಟೆ ಪರಿಸ್ಥಿತಿಗಳು ಸಹ ಉತ್ತಮವಾಗಿವೆ.',
+                        'ಪ್ರಸ್ತುತ ಹವಾಮಾನ ಪರಿಸ್ಥಿತಿಗಳ ಪ್ರಕಾರ, ನೀವು ನೀರಾವರಿಯ ಆವರ್ತನವನ್ನು ಹೆಚ್ಚಿಸಬೇಕು.',
+                        'ಮಾರುಕಟ್ಟೆ ಮಾಹಿತಿಯ ಪ್ರಕಾರ, ಬತ್ತದ ಬೆಲೆಗಳು ಮುಂದಿನ ತಿಂಗಳಲ್ಲಿ 8-10% ಹೆಚ್ಚಾಗಬಹುದು.',
+                        'ನಿಮ್ಮ ಬೆಳೆಗೆ ಯಾವುದೇ ರೋಗದ ಲಕ್ಷಣಗಳು ಕಂಡುಬಂದಿಲ್ಲ. ನಿಯಮಿತ ಕಾಳಜಿ ಮುಂದುವರಿಸಿ.',
+                        'ನಾನು ನಿಮ್ಮ ಬೆಳೆಗಳ ಫೋಟೋಗಳನ್ನು ವಿಶ್ಲೇಷಿಸಬಲ್ಲೆ. ದಯವಿಟ್ಟು ಕ್ಯಾಮರಾ ಐಕಾನ್ ಅನ್ನು ಕ್ಲಿಕ್ ಮಾಡಿ.',
+                        'ನಿಮ್ಮ ಪ್ರದೇಶದಲ್ಲಿ ಗೋಧಿ ಸಾಗುವಳಿಗೆ ಹವಾಮಾನ ಅನುಕೂಲಕರವಾಗಿದೆ. ನೀವು ಬಿತ್ತನೆ ಪ್ರಾರಂಭಿಸಬಹುದು.'
+                    ]
+                };
+
+                const aiResponse = {
+                    type: 'assistant',
+                    content: responses[selectedLanguage][Math.floor(Math.random() * responses[selectedLanguage].length)],
+                    timestamp: new Date()
+                };
+
+                setMessages(prev => [...prev, aiResponse]);
+                setIsProcessing(false);
+            }, 1500);
+        };
+
+        React.useEffect(() => {
+            if (transcript) {
+                handleSendMessage(transcript);
+            }
+        }, [transcript]);
+
+        const handleLanguageChange = (lang) => {
+            setSelectedLanguage(lang);
+            // In a real app, you would change the recognition language here
+            alert(`Language changed to ${lang}. In a real app, voice recognition would now work in this language.`);
+        };
 
         return (
             <div className="container mx-auto px-4 py-8 space-y-8 slide-in">
@@ -742,83 +2174,254 @@
                     </p>
                 </div>
 
-                    <div className="glass-effect rounded-2xl p-6">
-                        <div className="text-center mb-6">
+                <div className="bg-white rounded-2xl shadow-sm p-6 max-w-4xl mx-auto">
+                    {/* Language Selector */}
+                    <div className="mb-6">
+                        <label className="block text-gray-700 font-medium mb-2">Select Language</label>
+                        <div className="flex flex-wrap gap-2">
                             <button
-                                onClick={handleVoiceCommand}
-                                className={`relative w-24 h-24 rounded-full transition-all duration-300 ${
-                                    isListening 
-                                        ? 'bg-red-500 shadow-2xl' 
-                                        : 'bg-blue-500 hover:bg-blue-600'
-                                }`}
+                                onClick={() => handleLanguageChange('hi-IN')}
+                                className={`tab-button ${selectedLanguage === 'hi-IN' ? 'active' : ''}`}
                             >
-                                {isListening && (
-                                    <div className="absolute inset-0 rounded-full bg-red-500 pulse-ring"></div>
-                                )}
-                                <i className={`fas ${isListening ? 'fa-stop' : 'fa-microphone'} text-white text-2xl`}></i>
+                                <i className="fas fa-language mr-2"></i> Hindi
                             </button>
-                            <div className="mt-4 text-white font-medium">
-                                {isListening ? 'Listening...' : 'Tap to speak'}
-                            </div>
+                            <button
+                                onClick={() => handleLanguageChange('en-US')}
+                                className={`tab-button ${selectedLanguage === 'en-US' ? 'active' : ''}`}
+                            >
+                                <i className="fas fa-language mr-2"></i> English
+                            </button>
+                            <button
+                                onClick={() => handleLanguageChange('te-IN')}
+                                className={`tab-button ${selectedLanguage === 'te-IN' ? 'active' : ''}`}
+                            >
+                                <i className="fas fa-language mr-2"></i> Telugu
+                            </button>
+                            <button
+                                onClick={() => handleLanguageChange('kn-IN')}
+                                className={`tab-button ${selectedLanguage === 'kn-IN' ? 'active' : ''}`}
+                            >
+                                <i className="fas fa-language mr-2"></i> Kannada
+                            </button>
                         </div>
+                    </div>
 
-                        {isListening && (
-                            <div className="flex justify-center space-x-1 mb-4">
-                                {[...Array(5)].map((_, i) => (
-                                    <div key={i} className="bg-white/70 w-1 voice-wave rounded-full" style={{ animationDelay: `${i * 0.1}s` }}></div>
-                                ))}
-                            </div>
-                        )}
-
-                        <div className="bg-white/10 rounded-xl p-4 max-h-64 overflow-y-auto">
+                    {/* Chat Messages */}
+                    <div className="voice-message-container h-96 overflow-y-auto mb-6 p-4 bg-gray-50 rounded-lg">
+                        <div className="space-y-4">
                             {messages.map((message, index) => (
-                                <div key={index} className={`mb-4 ${message.type === 'user' ? 'text-right' : 'text-left'}`}>
-                                    <div className={`inline-block max-w-xs lg:max-w-md px-4 py-2 rounded-xl ${
-                                        message.type === 'user' 
-                                            ? 'bg-blue-500 text-white' 
-                                            : 'bg-white/20 text-white'
-                                    }`}>
-                                        {message.text}
+                                <div
+                                    key={index}
+                                    className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
+                                >
+                                    <div
+                                        className={`max-w-xs lg:max-w-md px-4 py-3 rounded-2xl ${
+                                            message.type === 'user'
+                                                ? 'bg-blue-500 text-white'
+                                                : 'bg-gray-200 text-gray-800'
+                                        }`}
+                                    >
+                                        <p className="text-sm">{message.content}</p>
+                                        <p className="text-xs opacity-70 mt-1">
+                                            {message.timestamp.toLocaleTimeString()}
+                                        </p>
                                     </div>
                                 </div>
                             ))}
+
+                            {isProcessing && (
+                                <div className="flex justify-start">
+                                    <div className="bg-gray-200 text-gray-800 px-4 py-3 rounded-2xl">
+                                        <div className="flex items-center space-x-2">
+                                            <div className="w-2 h-2 bg-gray-600 rounded-full animate-pulse"></div>
+                                            <div className="w-2 h-2 bg-gray-600 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+                                            <div className="w-2 h-2 bg-gray-600 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Input and Controls */}
+                    <div className="space-y-4">
+                        <div className="flex items-center space-x-2">
+                            <input
+                                type="text"
+                                value={inputMessage}
+                                onChange={(e) => setInputMessage(e.target.value)}
+                                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage(inputMessage)}
+                                placeholder="Type your message here..."
+                                className="flex-1 input-field py-2 px-4 rounded-lg"
+                            />
+                            <button
+                                onClick={() => handleSendMessage(inputMessage)}
+                                className="btn-primary p-3 rounded-lg"
+                                disabled={!inputMessage.trim()}
+                            >
+                                <i className="fas fa-paper-plane"></i>
+                            </button>
                         </div>
 
-                        <div className="mt-4 text-center">
-                            <p className="text-white/70 text-sm">
-                                You can ask about: Crop diseases, Market prices, Weather, Fertilizers, Government schemes
-                            </p>
+                        {/* Voice Controls */}
+                        <div className="flex flex-col items-center space-y-4">
+                            <button
+                                onClick={isListening ? stopListening : startListening}
+                                className={`w-16 h-16 rounded-full flex items-center justify-center transition-all ${
+                                    isListening
+                                        ? 'bg-red-500 hover:bg-red-600 animate-pulse'
+                                        : 'bg-green-500 hover:bg-green-600'
+                                }`}
+                            >
+                                <i className={`fas ${isListening ? 'fa-stop' : 'fa-microphone'} text-white text-xl`}></i>
+                            </button>
+
+                            {isListening && (
+                                <div className="flex items-center space-x-1 h-8">
+                                    {[1, 2, 3, 4, 5].map((i) => (
+                                        <div
+                                            key={i}
+                                            className="w-1 bg-green-500 rounded-full voice-wave"
+                                            style={{ animationDelay: `${i * 0.1}s` }}
+                                        ></div>
+                                    ))}
+                                </div>
+                            )}
+
+                            <div className="text-center">
+                                <p className="text-gray-600 text-sm">
+                                    {isListening ? 'Listening... Speak now' : 'Press the microphone button and start speaking'}
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
-            );
+            </div>
+        );
+    };
+
+    // Smart Recommendations Component
+    const SmartRecommendations = ({ setActiveTab }) => {
+        const [selectedSeason, setSelectedSeason] = React.useState('rabi');
+        const [selectedSoil, setSelectedSoil] = React.useState('loamy');
+        const [recommendations, setRecommendations] = React.useState([]);
+        const [selectedCrop, setSelectedCrop] = React.useState(null);
+
+        const seasons = ['rabi', 'kharif', 'zaid'];
+        const soilTypes = ['loamy', 'clay', 'sandy', 'red', 'black'];
+
+        const cropRecommendations = {
+            rabi: {
+                loamy: [
+                    {
+                        name: 'Wheat',
+                        yield: '45-50 quintals/hectare',
+                        profit: '$45,000-60,000',
+                        duration: '120-150 days',
+                        guide: {
+                            planting: 'October to November',
+                            irrigation: '4-6 times during growth period',
+                            fertilizer: '120 kg N, 60 kg P205, 40 kg K20 per hectare',
+                            pests: 'Aphids, termites, and rust diseases',
+                            harvesting: 'March to April when grains are hard'
+                        }
+                    },
+                    {
+                        name: 'Barley',
+                        yield: '35-40 quintals/hectare',
+                        profit: '$35,000-45,000',
+                        duration: '110-140 days',
+                        guide: {
+                            planting: 'October to November',
+                            irrigation: '3-4 times during growth period',
+                            fertilizer: '80 kg N, 40 kg P205, 20 kg K20 per hectare',
+                            pests: 'Aphids and rust diseases',
+                            harvesting: 'March when grains are hard'
+                        }
+                    },
+                    {
+                        name: 'Mustard',
+                        yield: '15-20 quintals/hectare',
+                        profit: '$50,000-70,000',
+                        duration: '90-120 days',
+                        guide: {
+                            planting: 'October to November',
+                            irrigation: '2-3 times during growth period',
+                            fertilizer: '60 kg N, 30 kg P205, 20 kg K20 per hectare',
+                            pests: 'Aphids and white rust',
+                            harvesting: 'February to March when pods turn yellow'
+                        }
+                    }
+                ],
+                clay: [
+                    {
+                        name: 'Wheat',
+                        yield: '40-45 quintals/hectare',
+                        profit: '$40,000-55,000',
+                        duration: '120-150 days',
+                        guide: {
+                            planting: 'October to November',
+                            irrigation: '5-7 times during growth period',
+                            fertilizer: '100 kg N, 50 kg P205, 40 kg K20 per hectare',
+                            pests: 'Aphids, termites, and rust diseases',
+                            harvesting: 'March to April when grains are hard'
+                        }
+                    },
+                    {
+                        name: 'Gram',
+                        yield: '15-20 quintals/hectare',
+                        profit: '$30,000-40,000',
+                        duration: '100-130 days',
+                        guide: {
+                            planting: 'October to November',
+                            irrigation: '2-3 times during growth period',
+                            fertilizer: '20 kg N, 50 kg P205, 20 kg K20 per hectare',
+                            pests: 'Pod borer and wilt disease',
+                            harvesting: 'March when pods are dry'
+                        }
+                    }
+                ]
+            },
+            kharif: {
+                loamy: [
+                    {
+                        name: 'Rice',
+                        yield: '50-60 quintals/hectare',
+                        profit: '$50,000-70,000',
+                        duration: '150-180 days',
+                        guide: {
+                            planting: 'June to July',
+                            irrigation: 'Continuous flooding (5-7cm water depth)',
+                            fertilizer: '120 kg N, 60 kg P205, 60 kg K20 per hectare',
+                            pests: 'Stem borer, leaf folder, and blast disease',
+                            harvesting: 'November to December when 80% grains are ripe'
+                        }
+                    },
+                    {
+                        name: 'Maize',
+                        yield: '40-50 quintals/hectare',
+                        profit: '$45,000-60,000',
+                        duration: '120-150 days',
+                        guide: {
+                            planting: 'June to July',
+                            irrigation: '8-10 times during growth period',
+                            fertilizer: '150 kg N, 75 kg P205, 75 kg K20 per hectare',
+                            pests: 'Stem borer and leaf blight',
+                            harvesting: 'October when husks turn yellow'
+                        }
+                    }
+                ]
+            }
         };
 
-        // Crop Recommendations Component
-        const CropRecommendations = () => {
-            const [formData, setFormData] = useState({
-                region: '',
-                soilType: '',
-                season: '',
-                waterAvailability: ''
-            });
-            const [recommendations, setRecommendations] = useState(null);
+        React.useEffect(() => {
+            const recs = cropRecommendations[selectedSeason]?.[selectedSoil] || [];
+            setRecommendations(recs);
+        }, [selectedSeason, selectedSoil]);
 
-            const handleSubmit = (e) => {
-                e.preventDefault();
-                // Simulate AI recommendation
-                setRecommendations({
-                    primaryCrop: 'Rice',
-                    secondaryCrops: ['Wheat', 'Sugarcane'],
-                    expectedYield: '45 quintals/acre',
-                    profitMargin: '₹25,000/acre',
-                    tips: [
-                                'Plant rice in the monsoon season',
-                                'Use hybrid seeds for better yield',
-                                'Apply organic fertilizers'
-                            ]
-                        });
-                    };
+        const handleShowGuide = (crop) => {
+            setSelectedCrop(crop);
+        };
 
         return (
             <div className="container mx-auto px-4 py-8 space-y-8 slide-in">
@@ -962,24 +2565,38 @@
         );
     };
 
-                // Government Schemes Component
-                const GovernmentSchemes = () => {
-                    const [selectedScheme, setSelectedScheme] = useState(null);
+    // Government Schemes Component
+    const GovernmentSchemes = ({ setActiveTab }) => {
+        const [selectedCategory, setSelectedCategory] = React.useState('all');
+        const [appliedSchemes, setAppliedSchemes] = React.useState([]);
+        const [selectedScheme, setSelectedScheme] = React.useState(null);
+        const [searchQuery, setSearchQuery] = React.useState("");
 
-                    const schemeDetails = {
-                        'PM-KISAN': {
-                            description: 'Direct income support to farmers',
-                            eligibility: 'All landholding farmers',
-                            documents: ['Aadhaar Card', 'Bank Account Details', 'Land Records'],
-                            process: 'Apply online through PM-KISAN portal or visit CSC center'
-                        },
-                        'Crop Insurance': {
-                            description: 'Comprehensive crop insurance coverage',
-                            eligibility: 'All farmers growing notified crops',
-                            documents: ['Aadhaar Card', 'Bank Account', 'Land Documents', 'Sowing Certificate'],
-                            process: 'Apply through insurance companies or banks within cut-off date'
-                        }
-                    };
+        const categories = [
+            { id: 'all', name: 'All Schemes' },
+            { id: 'central', name: 'Central Schemes' },
+            { id: 'state', name: 'State Schemes' },
+            { id: 'insurance', name: 'Insurance' },
+            { id: 'credit', name: 'Credit' }
+        ];
+
+        const handleApplyScheme = (schemeId) => {
+            if (!appliedSchemes.includes(schemeId)) {
+                setAppliedSchemes([...appliedSchemes, schemeId]);
+                alert('Application submitted successfully!');
+            }
+        };
+
+        const handleShowSchemeDetails = (scheme) => {
+            setSelectedScheme(scheme);
+        };
+
+        const filteredSchemes = mockSchemes.filter(scheme => {
+            const matchesCategory = selectedCategory === 'all' || scheme.type.toLowerCase() === selectedCategory;
+            const matchesSearch = scheme.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                                scheme.description.toLowerCase().includes(searchQuery.toLowerCase());
+            return matchesCategory && matchesSearch;
+        });
 
         return (
             <div className="container mx-auto px-4 py-8 space-y-8 slide-in">
@@ -999,107 +2616,696 @@
                             </p>
                         </div>
 
+                        {/* Search and Filters */}
+                        <div className="bg-white rounded-2xl shadow-sm p-6">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                {mockSchemes.map((scheme, index) => (
-                                    <div key={index} className="glass-effect rounded-2xl p-6 card-hover">
+                                <div>
+                                    <label className="block text-gray-700 font-medium mb-2">Search Schemes</label>
+                                    <div className="relative">
+                                        <input
+                                            type="text"
+                                            value={searchQuery}
+                                            onChange={(e) => setSearchQuery(e.target.value)}
+                                            placeholder="Search for schemes..."
+                                            className="w-full input-field py-2 px-4 pl-10 rounded-lg"
+                                        />
+                                        <i className="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label className="block text-gray-700 font-medium mb-2">Filter by Category</label>
+                                    <div className="flex flex-wrap gap-2">
+                                        {categories.map((category) => (
+                                            <button
+                                                key={category.id}
+                                                onClick={() => setSelectedCategory(category.id)}
+                                                className={`tab-button ${selectedCategory === category.id ? 'active' : ''}`}
+                                            >
+                                                {category.name}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Schemes Grid */}
+                        {filteredSchemes.length > 0 ? (
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {filteredSchemes.map((scheme, index) => (
+                                    <div key={index} className="card bg-white rounded-2xl shadow-sm p-6">
                                         <div className="flex items-center justify-between mb-4">
-                                            <h3 className="text-white font-semibold text-lg">{scheme.name}</h3>
-                                            <span className={`px-3 py-1 rounded-full text-sm ${
-                                                scheme.type === 'Central' 
-                                                    ? 'bg-blue-500/30 text-blue-300' 
-                                                    : 'bg-green-500/30 text-green-300'
+                                            <div className="flex items-center space-x-3">
+                                                <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                                                    <i className={`fas fa-${scheme.icon} text-green-600`}></i>
+                                                </div>
+                                                <div>
+                                                    <h3 className="text-gray-800 font-semibold">{scheme.name}</h3>
+                                                    <p className="text-gray-500 text-sm">{scheme.type} Government</p>
+                                                </div>
+                                            </div>
+                                            <div className={`px-3 py-1 rounded-full text-xs font-medium ${
+                                                scheme.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                                             }`}>
-                                                {scheme.type}
-                                            </span>
+                                                {scheme.status}
+                                            </div>
                                         </div>
-                                        <div className="text-white/70 mb-4">{scheme.amount}</div>
-                                        <button
-                                            onClick={() => setSelectedScheme(scheme.name)}
-                                            className="w-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white py-2 rounded-xl hover:from-indigo-600 hover:to-purple-600 transition-all duration-300"
-                                        >
-                                            View Details
-                                        </button>
+
+                                        <div className="space-y-3 mb-6">
+                                            <div className="bg-gray-50 rounded-lg p-3">
+                                                <div className="flex items-center justify-between">
+                                                    <span className="text-gray-600 text-sm">Benefit Amount</span>
+                                                    <span className="text-gray-800 font-semibold">{scheme.amount}</span>
+                                                </div>
+                                                <div className="text-gray-500 text-xs mt-1">{scheme.period}</div>
+                                            </div>
+
+                                            <div className="bg-gray-50 rounded-lg p-3">
+                                                <div className="flex items-center justify-between">
+                                                    <span className="text-gray-600 text-sm">Total Beneficiaries</span>
+                                                    <span className="text-blue-600 font-semibold">{scheme.beneficiaries}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <button
+                                                onClick={() => handleApplyScheme(index)}
+                                                disabled={appliedSchemes.includes(index)}
+                                                className={`w-full py-2 px-4 rounded-lg font-medium transition ${
+                                                    appliedSchemes.includes(index)
+                                                        ? 'bg-green-100 text-green-800 cursor-not-allowed'
+                                                        : 'btn-primary'
+                                                }`}
+                                            >
+                                                {appliedSchemes.includes(index) ? (
+                                                    <>
+                                                        <i className="fas fa-check mr-2"></i>
+                                                        Applied Successfully
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <i className="fas fa-paper-plane mr-2"></i>
+                                                        Apply Now
+                                                    </>
+                                                )}
+                                            </button>
+                                            <button
+                                                onClick={() => handleShowSchemeDetails(scheme)}
+                                                className="w-full bg-gray-100 text-gray-800 py-2 px-4 rounded-lg font-medium hover:bg-gray-200 transition"
+                                            >
+                                                <i className="fas fa-info-circle mr-2"></i>
+                                                Learn More
+                                            </button>
+                                        </div>
                                     </div>
                                 ))}
                             </div>
-
-                            {selectedScheme && schemeDetails[selectedScheme] && (
-                                <div className="glass-effect rounded-2xl p-6">
-                                    <h3 className="text-white font-semibold text-xl mb-4">{selectedScheme} Details</h3>
-                                    <div className="space-y-4">
-                                        <div>
-                                            <div className="text-white/70 text-sm mb-2">Description</div>
-                                            <div className="text-white">{schemeDetails[selectedScheme].description}</div>
-                                        </div>
-                                        <div>
-                                            <div className="text-white/70 text-sm mb-2">Eligibility</div>
-                                            <div className="text-white">{schemeDetails[selectedScheme].eligibility}</div>
-                                        </div>
-                                        <div>
-                                            <div className="text-white/70 text-sm mb-2">Required Documents</div>
-                                            <ul className="text-white space-y-1">
-                                                {schemeDetails[selectedScheme].documents.map((doc, index) => (
-                                                    <li key={index} className="flex items-start">
-                                                        <span className="text-blue-400 mr-2">•</span>
-                                                        {doc}
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        </div>
-                                        <div>
-                                            <div className="text-white/70 text-sm mb-2">Application Process</div>
-                                            <div className="text-white bg-blue-500/20 rounded-lg p-3">
-                                                {schemeDetails[selectedScheme].process}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <button
-                                        onClick={() => setSelectedScheme(null)}
-                                        className="mt-4 px-4 py-2 bg-white/20 text-white rounded-xl hover:bg-white/30 transition-all duration-300"
-                                    >
-                                        Close
-                                    </button>
+                        ) : (
+                            <div className="bg-white rounded-2xl shadow-sm p-8 text-center">
+                                <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                    <i className="fas fa-search text-gray-400 text-2xl"></i>
                                 </div>
-                            )}
+                                <h3 className="text-gray-800 font-semibold mb-2">No schemes found</h3>
+                                <p className="text-gray-600">Try a different search term or category</p>
+                            </div>
+                        )}
+                    </>
+                ) : (
+                    <div className="bg-white rounded-2xl shadow-sm p-6">
+                        <div className="back-button" onClick={() => setSelectedScheme(null)}>
+                            <i className="fas fa-arrow-left"></i>
+                            <span>Back to Schemes</span>
                         </div>
-                    );
-                };
 
-                // Main App Component
-                const App = () => {
-                    const [activeTab, setActiveTab] = useState('dashboard');
-
-                    const renderContent = () => {
-                        switch (activeTab) {
-                            case 'dashboard':
-                                return <Dashboard />;
-                            case 'crop-disease':
-                                return <CropDiseaseDetection />;
-                            case 'market':
-                                return <MarketAnalysis />;
-                            case 'voice':
-                                return <VoiceAssistant />;
-                            case 'recommendations':
-                                return <CropRecommendations />;
-                            case 'schemes':
-                                return <GovernmentSchemes />;
-                            default:
-                                return <Dashboard />;
-                        }
-                    };
-
-                    return (
-                        <div className="min-h-screen p-4">
-                            <div className="max-w-7xl mx-auto">
-                                <Navigation activeTab={activeTab} setActiveTab={setActiveTab} />
-                                {renderContent()}
+                        <div className="flex items-center space-x-3 mb-6">
+                            <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                                <i className={`fas fa-${selectedScheme.icon} text-green-600`}></i>
+                            </div>
+                            <div>
+                                <h3 className="text-xl font-semibold text-gray-800">{selectedScheme.name}</h3>
+                                <p className="text-gray-600">{selectedScheme.type} Government Scheme</p>
                             </div>
                         </div>
-                    );
-                };
 
-                // Render the app
-                ReactDOM.render(<App />, document.getElementById('root'));
-            </script>
-        </body>
-        </html>
+                        <div className="space-y-4">
+                            <div className="bg-gray-50 rounded-lg p-4">
+                                <h4 className="text-gray-800 font-medium mb-2">Description</h4>
+                                <p className="text-gray-600">{selectedScheme.description}</p>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="bg-gray-50 rounded-lg p-4">
+                                    <h4 className="text-gray-800 font-medium mb-2">Benefits</h4>
+                                    <p className="text-gray-600">{selectedScheme.amount} {selectedScheme.period}</p>
+                                </div>
+                                <div className="bg-gray-50 rounded-lg p-4">
+                                    <h4 className="text-gray-800 font-medium mb-2">Beneficiaries</h4>
+                                    <p className="text-gray-600">{selectedScheme.beneficiaries} farmers</p>
+                                </div>
+                            </div>
+
+                            <div className="bg-blue-50 rounded-lg p-4">
+                                <h4 className="text-blue-800 font-medium mb-2">Eligibility Criteria</h4>
+                                <p className="text-blue-700">{selectedScheme.eligibility}</p>
+                            </div>
+
+                            <div className="bg-yellow-50 rounded-lg p-4">
+                                <h4 className="text-yellow-800 font-medium mb-2">Required Documents</h4>
+                                <p className="text-yellow-700">{selectedScheme.documents}</p>
+                            </div>
+
+                            <div className="pt-4">
+                                <button
+                                    onClick={() => {
+                                        const isApplied = appliedSchemes.includes(mockSchemes.indexOf(selectedScheme));
+                                        if (!isApplied) {
+                                            handleApplyScheme(mockSchemes.indexOf(selectedScheme));
+                                        }
+                                    }}
+                                    disabled={appliedSchemes.includes(mockSchemes.indexOf(selectedScheme))}
+                                    className={`w-full py-3 px-4 rounded-lg font-medium ${
+                                        appliedSchemes.includes(mockSchemes.indexOf(selectedScheme))
+                                            ? 'bg-green-100 text-green-800'
+                                            : 'btn-primary'
+                                    }`}
+                                >
+                                    {appliedSchemes.includes(mockSchemes.indexOf(selectedScheme)) ? (
+                                        <>
+                                            <i className="fas fa-check-circle mr-2"></i>
+                                            Already Applied
+                                        </>
+                                    ) : (
+                                        <>
+                                            <i className="fas fa-file-signature mr-2"></i>
+                                            Apply Now
+                                        </>
+                                    )}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </div>
+        );
+    };
+
+    // Profile Page Component
+    const ProfilePage = ({ setActiveTab, farmerDetails, onLogout }) => {
+        const [activeProfileTab, setActiveProfileTab] = React.useState('personal');
+        const [editMode, setEditMode] = React.useState(false);
+        const [formData, setFormData] = React.useState({
+            name: farmerDetails?.name || '',
+            email: farmerDetails?.email || '',
+            phone: farmerDetails?.phone || '',
+            address: '123 Farm Lane, Tirupati, Andhra Pradesh',
+            farmSize: '5 acres',
+            crops: 'Rice, Wheat, Vegetables',
+            irrigation: 'Tube Well',
+            soilType: 'Loamy',
+            experience: '15 years',
+            aadhaar: 'XXXX-XXXX-7890',
+            bankAccount: 'SBI XXXXXX6789'
+        });
+
+        const handleInputChange = (e) => {
+            const { name, value } = e.target;
+            setFormData(prev => ({
+                ...prev,
+                [name]: value
+            }));
+        };
+
+        const handleSaveProfile = () => {
+            setEditMode(false);
+            // In a real app, you would save to backend here
+            alert('Profile updated successfully!');
+        };
+
+        return (
+            <div className="container mx-auto px-4 py-8 slide-in">
+                <div className="back-button" onClick={() => setActiveTab('dashboard')}>
+                    <i className="fas fa-arrow-left"></i>
+                    <span>Back to Dashboard</span>
+                </div>
+
+                {/* Profile Header */}
+                <div className="profile-header rounded-2xl overflow-hidden mb-8">
+                    <div className="p-6 md:p-8 text-white">
+                        <div className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6">
+                            {farmerDetails?.picture ? (
+                                <img 
+                                    src={farmerDetails.picture} 
+                                    alt="Profile" 
+                                    className="profile-avatar w-24 h-24 md:w-32 md:h-32"
+                                />
+                            ) : (
+                                <div className="profile-avatar w-24 h-24 md:w-32 md:h-32 bg-white flex items-center justify-center">
+                                    <i className="fas fa-user text-green-600 text-4xl"></i>
+                                </div>
+                            )}
+                            <div className="text-center md:text-left">
+                                <h2 className="text-2xl md:text-3xl font-bold">{formData.name}</h2>
+                                <p className="text-white text-opacity-80">{formData.email}</p>
+                                <p className="text-white text-opacity-80 mt-1">{formData.phone}</p>
+                                <div className="flex flex-wrap justify-center md:justify-start gap-2 mt-3">
+                                    <div className="profile-stat px-3 py-1 rounded-full text-sm">
+                                        <i className="fas fa-tractor mr-1"></i> {formData.experience} Farming
+                                    </div>
+                                    <div className="profile-stat px-3 py-1 rounded-full text-sm">
+                                        <i className="fas fa-map-marker-alt mr-1"></i> {formData.address.split(',')[1]}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Profile Tabs */}
+                <div className="flex border-b border-gray-200 mb-6">
+                    <button
+                        onClick={() => setActiveProfileTab('personal')}
+                        className={`profile-tab px-4 py-2 ${activeProfileTab === 'personal' ? 'active' : 'text-gray-600'}`}
+                    >
+                        <i className="fas fa-user mr-2"></i> Personal Info
+                    </button>
+                    <button
+                        onClick={() => setActiveProfileTab('farm')}
+                        className={`profile-tab px-4 py-2 ${activeProfileTab === 'farm' ? 'active' : 'text-gray-600'}`}
+                    >
+                        <i className="fas fa-tractor mr-2"></i> Farm Details
+                    </button>
+                    <button
+                        onClick={() => setActiveProfileTab('documents')}
+                        className={`profile-tab px-4 py-2 ${activeProfileTab === 'documents' ? 'active' : 'text-gray-600'}`}
+                    >
+                        <i className="fas fa-file-alt mr-2"></i> Documents
+                    </button>
+                    <button
+                        onClick={() => setActiveProfileTab('settings')}
+                        className={`profile-tab px-4 py-2 ${activeProfileTab === 'settings' ? 'active' : 'text-gray-600'}`}
+                    >
+                        <i className="fas fa-cog mr-2"></i> Settings
+                    </button>
+                </div>
+
+                {/* Profile Content */}
+                <div className="bg-white rounded-2xl shadow-sm p-6">
+                    {activeProfileTab === 'personal' && (
+                        <div className="space-y-6">
+                            <div className="flex justify-between items-center">
+                                <h3 className="text-xl font-semibold text-gray-800">Personal Information</h3>
+                                {editMode ? (
+                                    <div className="space-x-2">
+                                        <button
+                                            onClick={() => setEditMode(false)}
+                                            className="bg-gray-100 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-200 transition"
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button
+                                            onClick={handleSaveProfile}
+                                            className="btn-primary px-4 py-2 rounded-lg"
+                                        >
+                                            Save Changes
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <button
+                                        onClick={() => setEditMode(true)}
+                                        className="btn-primary px-4 py-2 rounded-lg"
+                                    >
+                                        <i className="fas fa-edit mr-2"></i> Edit Profile
+                                    </button>
+                                )}
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label className="block text-gray-700 font-medium mb-2">Full Name</label>
+                                    {editMode ? (
+                                        <input
+                                            type="text"
+                                            name="name"
+                                            value={formData.name}
+                                            onChange={handleInputChange}
+                                            className="w-full input-field py-2 px-3 rounded-lg"
+                                        />
+                                    ) : (
+                                        <p className="text-gray-800 bg-gray-50 p-3 rounded-lg">{formData.name}</p>
+                                    )}
+                                </div>
+                                <div>
+                                    <label className="block text-gray-700 font-medium mb-2">Email</label>
+                                    {editMode ? (
+                                        <input
+                                            type="email"
+                                            name="email"
+                                            value={formData.email}
+                                            onChange={handleInputChange}
+                                            className="w-full input-field py-2 px-3 rounded-lg"
+                                        />
+                                    ) : (
+                                        <p className="text-gray-800 bg-gray-50 p-3 rounded-lg">{formData.email}</p>
+                                    )}
+                                </div>
+                                <div>
+                                    <label className="block text-gray-700 font-medium mb-2">Phone Number</label>
+                                    {editMode ? (
+                                        <input
+                                            type="tel"
+                                            name="phone"
+                                            value={formData.phone}
+                                            onChange={handleInputChange}
+                                            className="w-full input-field py-2 px-3 rounded-lg"
+                                        />
+                                    ) : (
+                                        <p className="text-gray-800 bg-gray-50 p-3 rounded-lg">{formData.phone}</p>
+                                    )}
+                                </div>
+                                <div>
+                                    <label className="block text-gray-700 font-medium mb-2">Address</label>
+                                    {editMode ? (
+                                        <input
+                                            type="text"
+                                            name="address"
+                                            value={formData.address}
+                                            onChange={handleInputChange}
+                                            className="w-full input-field py-2 px-3 rounded-lg"
+                                        />
+                                    ) : (
+                                        <p className="text-gray-800 bg-gray-50 p-3 rounded-lg">{formData.address}</p>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {activeProfileTab === 'farm' && (
+                        <div className="space-y-6">
+                            <div className="flex justify-between items-center">
+                                <h3 className="text-xl font-semibold text-gray-800">Farm Details</h3>
+                                {editMode ? (
+                                    <div className="space-x-2">
+                                        <button
+                                            onClick={() => setEditMode(false)}
+                                            className="bg-gray-100 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-200 transition"
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button
+                                            onClick={handleSaveProfile}
+                                            className="btn-primary px-4 py-2 rounded-lg"
+                                        >
+                                            Save Changes
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <button
+                                        onClick={() => setEditMode(true)}
+                                        className="btn-primary px-4 py-2 rounded-lg"
+                                    >
+                                        <i className="fas fa-edit mr-2"></i> Edit Farm Details
+                                    </button>
+                                )}
+                            </div>
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label className="block text-gray-700 font-medium mb-2">Farm Size</label>
+                                    {editMode ? (
+                                        <input
+                                            type="text"
+                                            name="farmSize"
+                                            value={formData.farmSize}
+                                            onChange={handleInputChange}
+                                            className="w-full input-field py-2 px-3 rounded-lg"
+                                        />
+                                    ) : (
+                                        <p className="text-gray-800 bg-gray-50 p-3 rounded-lg">{formData.farmSize}</p>
+                                    )}
+                                </div>
+                                <div>
+                                    <label className="block text-gray-700 font-medium mb-2">Main Crops</label>
+                                    {editMode ? (
+                                        <input
+                                            type="text"
+                                            name="crops"
+                                            value={formData.crops}
+                                            onChange={handleInputChange}
+                                            className="w-full input-field py-2 px-3 rounded-lg"
+                                        />
+                                    ) : (
+                                        <p className="text-gray-800 bg-gray-50 p-3 rounded-lg">{formData.crops}</p>
+                                    )}
+                                </div>
+                                <div>
+                                    <label className="block text-gray-700 font-medium mb-2">Irrigation Source</label>
+                                    {editMode ? (
+                                        <select
+                                            name="irrigation"
+                                            value={formData.irrigation}
+                                            onChange={handleInputChange}
+                                            className="w-full input-field py-2 px-3 rounded-lg"
+                                        >
+                                            <option value="Tube Well">Tube Well</option>
+                                            <option value="Canal">Canal</option>
+                                            <option value="Rainfed">Rainfed</option>
+                                            <option value="Drip">Drip Irrigation</option>
+                                        </select>
+                                    ) : (
+                                        <p className="text-gray-800 bg-gray-50 p-3 rounded-lg">{formData.irrigation}</p>
+                                    )}
+                                </div>
+                                <div>
+                                    <label className="block text-gray-700 font-medium mb-2">Soil Type</label>
+                                    {editMode ? (
+                                        <select
+                                            name="soilType"
+                                            value={formData.soilType}
+                                            onChange={handleInputChange}
+                                            className="w-full input-field py-2 px-3 rounded-lg"
+                                        >
+                                            <option value="Loamy">Loamy</option>
+                                            <option value="Clay">Clay</option>
+                                            <option value="Sandy">Sandy</option>
+                                            <option value="Black">Black</option>
+                                            <option value="Red">Red</option>
+                                        </select>
+                                    ) : (
+                                        <p className="text-gray-800 bg-gray-50 p-3 rounded-lg">{formData.soilType}</p>
+                                    )}
+                                </div>
+                                <div>
+                                    <label className="block text-gray-700 font-medium mb-2">Farming Experience</label>
+                                    {editMode ? (
+                                        <input
+                                            type="text"
+                                            name="experience"
+                                            value={formData.experience}
+                                            onChange={handleInputChange}
+                                            className="w-full input-field py-2 px-3 rounded-lg"
+                                        />
+                                    ) : (
+                                        <p className="text-gray-800 bg-gray-50 p-3 rounded-lg">{formData.experience}</p>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {activeProfileTab === 'documents' && (
+                        <div className="space-y-6">
+                            <h3 className="text-xl font-semibold text-gray-800">Documents</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label className="block text-gray-700 font-medium mb-2">Aadhaar Number</label>
+                                    <p className="text-gray-800 bg-gray-50 p-3 rounded-lg">{formData.aadhaar}</p>
+                                </div>
+                                <div>
+                                    <label className="block text-gray-700 font-medium mb-2">Bank Account</label>
+                                    <p className="text-gray-800 bg-gray-50 p-3 rounded-lg">{formData.bankAccount}</p>
+                                </div>
+                            </div>
+                            <div className="pt-4 border-t border-gray-200">
+                                <h4 className="text-lg font-semibold text-gray-800 mb-4">Upload Documents</h4>
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center cursor-pointer hover:border-green-500 hover:bg-green-50 transition">
+                                        <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mx-auto mb-2">
+                                            <i className="fas fa-id-card text-green-600"></i>
+                                        </div>
+                                        <p className="text-gray-800 font-medium">Aadhaar Card</p>
+                                        <p className="text-gray-500 text-xs">PDF, JPG, PNG up to 5MB</p>
+                                    </div>
+                                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center cursor-pointer hover:border-green-500 hover:bg-green-50 transition">
+                                        <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mx-auto mb-2">
+                                            <i className="fas fa-landmark text-green-600"></i>
+                                        </div>
+                                        <p className="text-gray-800 font-medium">Land Records</p>
+                                        <p className="text-gray-500 text-xs">PDF, JPG, PNG up to 5MB</p>
+                                    </div>
+                                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center cursor-pointer hover:border-green-500 hover:bg-green-50 transition">
+                                        <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mx-auto mb-2">
+                                            <i className="fas fa-credit-card text-green-600"></i>
+                                        </div>
+                                        <p className="text-gray-800 font-medium">Bank Details</p>
+                                        <p className="text-gray-500 text-xs">PDF, JPG, PNG up to 5MB</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {activeProfileTab === 'settings' && (
+                        <div className="space-y-6">
+                            <h3 className="text-xl font-semibold text-gray-800">Account Settings</h3>
+                            
+                            <div className="space-y-4">
+                                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                                    <h4 className="text-yellow-800 font-medium mb-2 flex items-center">
+                                        <i className="fas fa-shield-alt mr-2"></i> Change Password
+                                    </h4>
+                                    <div className="space-y-3">
+                                        <div>
+                                            <label className="block text-gray-700 text-sm mb-1">Current Password</label>
+                                            <input
+                                                type="password"
+                                                className="w-full input-field py-2 px-3 rounded-lg"
+                                                placeholder="Enter current password"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-gray-700 text-sm mb-1">New Password</label>
+                                            <input
+                                                type="password"
+                                                className="w-full input-field py-2 px-3 rounded-lg"
+                                                placeholder="Enter new password"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-gray-700 text-sm mb-1">Confirm New Password</label>
+                                            <input
+                                                type="password"
+                                                className="w-full input-field py-2 px-3 rounded-lg"
+                                                placeholder="Confirm new password"
+                                            />
+                                        </div>
+                                        <button className="btn-primary px-4 py-2 rounded-lg text-sm">
+                                            Update Password
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                                    <h4 className="text-red-800 font-medium mb-2 flex items-center">
+                                        <i className="fas fa-exclamation-triangle mr-2"></i> Danger Zone
+                                    </h4>
+                                    <p className="text-red-700 text-sm mb-3">
+                                        Deleting your account will remove all your data from our servers. This action cannot be undone.
+                                    </p>
+                                    <button
+                                        onClick={onLogout}
+                                        className="bg-red-100 text-red-700 px-4 py-2 rounded-lg hover:bg-red-200 transition"
+                                    >
+                                        <i className="fas fa-sign-out-alt mr-2"></i> Logout
+                                    </button>
+                                    <button className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition ml-3">
+                                        <i className="fas fa-trash mr-2"></i> Delete Account
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </div>
+        );
+    };
+
+    // Main App Component
+    const KisanAI = () => {
+        const [activeTab, setActiveTab] = React.useState('login');
+        const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+        const [farmerDetails, setFarmerDetails] = React.useState(null);
+
+        const handleLoginSuccess = (details) => {
+            setFarmerDetails(details);
+            setIsLoggedIn(true);
+            setActiveTab('dashboard');
+        };
+
+        const handleLogout = () => {
+            setIsLoggedIn(false);
+            setFarmerDetails(null);
+            setActiveTab('login');
+            
+            // Sign out from Google if needed
+            if (typeof google !== 'undefined') {
+                google.accounts.id.disableAutoSelect();
+            }
+        };
+
+        if (!isLoggedIn) {
+            return <LoginPage onLoginSuccess={handleLoginSuccess} />;
+        }
+
+        return (
+            <div className="min-h-screen bg-gray-50">
+                <Navigation
+                    activeTab={activeTab}
+                    setActiveTab={setActiveTab}
+                    onLogout={handleLogout}
+                    farmerDetails={farmerDetails}
+                />
+                <main className="transition-all duration-500">
+                    {activeTab === 'dashboard' && <Dashboard setActiveTab={setActiveTab} />}
+                    {activeTab === 'crop-disease' && <CropDiseaseDetection setActiveTab={setActiveTab} />}
+                    {activeTab === 'market' && <MarketIntelligence setActiveTab={setActiveTab} />}
+                    {activeTab === 'voice' && <VoiceAssistant setActiveTab={setActiveTab} />}
+                    {activeTab === 'recommendations' && <SmartRecommendations setActiveTab={setActiveTab} />}
+                    {activeTab === 'schemes' && <GovernmentSchemes setActiveTab={setActiveTab} />}
+                    {activeTab === 'profile' && <ProfilePage setActiveTab={setActiveTab} farmerDetails={farmerDetails} onLogout={handleLogout} />}
+                </main>
+
+                <footer className="bg-white border-t border-gray-200 py-8">
+                    <div className="container mx-auto px-4">
+                        <div className="flex flex-col md:flex-row justify-between items-center">
+                            <div className="flex items-center space-x-2 mb-4 md:mb-0">
+                                <div className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
+                                    <i className="fas fa-seedling text-white"></i>
+                                </div>
+                                <h3 className="text-lg font-bold text-gray-800">Kisan AI</h3>
+                            </div>
+
+                            <div className="flex space-x-6">
+                                <a href="#" className="text-gray-600 hover:text-green-600">
+                                    <i className="fab fa-facebook-f"></i>
+                                </a>
+                                <a href="#" className="text-gray-600 hover:text-green-600">
+                                    <i className="fab fa-twitter"></i>
+                                </a>
+                                <a href="#" className="text-gray-600 hover:text-green-600">
+                                    <i className="fab fa-instagram"></i>
+                                </a>
+                                <a href="#" className="text-gray-600 hover:text-green-600">
+                                    <i className="fab fa-youtube"></i>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div className="border-t border-gray-200 mt-6 pt-6 text-center md:text-left">
+                            <p className="text-gray-500 text-sm">
+                                © 2023 Kisan AI. All rights reserved. Empowering farmers with AI-powered insights.
+                            </p>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        );
+    };
+
+    // Render the app
+    ReactDOM.render(<KisanAI />, document.getElementById('root'));
+</script>
+</body>
+</html>
