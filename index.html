@@ -63,6 +63,24 @@ body {
     transition: all 0.3s ease;
 }
 
+/* Add this to your CSS */
+#googleSignInButton {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+#googleSignInButton > div {
+    width: 100% !important;
+}
+
+.gsi-material-button {
+    width: 100% !important;
+    height: 44px !important;
+    min-width: auto !important;
+    max-width: 100% !important;
+}
+
 .card:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
@@ -444,11 +462,11 @@ body {
         google.accounts.id.renderButton(
             document.getElementById('googleSignInButton'),
             { 
-               theme: 'outline', 
-        size: 'laarge', // Try 'medium' for better fit
+               thetheme: 'outline', 
+        size: 'large', // Fixed typo from 'laarge' to 'large'
         text: 'continue_with',
         shape: 'rectangular',
-        width: 'auto' // Let it adjust to content
+        width: '300' // Set a fixed width or 'auto' for automatic sizing
             }
         );
     }
